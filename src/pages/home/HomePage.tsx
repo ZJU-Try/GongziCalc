@@ -18,7 +18,6 @@ const HomePage: React.FC = () => {
   const [tick, setTick] = useState(0); // 用于强制刷新
   const timerRef = useRef<number | null>(null);
 
-  // 1. 加载设置
   useEffect(() => {
     const s = loadSettings();
     if (!s) {
@@ -28,10 +27,8 @@ const HomePage: React.FC = () => {
     setSettings(s);
   }, [navigate]);
 
-  // 2. 每秒计算一次
   useEffect(() => {
     if (!settings) return;
-    // 立刻先算一次
     setResult(calculateSalary(settings, new Date()));
 
     timerRef.current = window.setInterval(() => {
@@ -47,10 +44,8 @@ const HomePage: React.FC = () => {
     };
   }, [settings]);
 
-  // 3. 去设置页
   const goSetting = () => navigate('/setting');
 
-  // 4. 重置（仅调试，不直接暴露）
   const handleReset = () => {
     if (confirm('确定要清除所有设置重新来过吗？😿')) {
       clearSettings();
@@ -58,9 +53,8 @@ const HomePage: React.FC = () => {
     }
   };
 
-  // 根据状态返回卡片配色
   const statusTheme = useMemo(() => {
-    if (!result) return { gradient: '#FFD6E3', accent: '#FF5C8A', glow: 'rgba(255,92,138,.35)' };
+    if (!result) return { gradient: 'linear-gradient(135deg,#FFE5EC,#FFC1D6)', accent: '#FF5C8A', glow: 'rgba(255,92,138,.35)' };
     switch (result.status) {
       case 'working':
         return { gradient: 'linear-gradient(135deg,#FFE29A,#FFB347)', accent: '#F08A00', glow: 'rgba(240,138,0,.35)' };
@@ -86,6 +80,7 @@ const HomePage: React.FC = () => {
   }
 
   const dailyHours = (getDailyWorkSeconds(settings) / 3600).toFixed(1);
+  const dailySalary = settings.monthlySalary / result.monthWorkDays;
 
   return (
     <div className="home-page">
@@ -101,19 +96,17 @@ const HomePage: React.FC = () => {
       {/* 顶部工具栏 */}
       <div className="home-topbar">
         <div className="date-box">
-          <div className="date-text">{formatDate(result.now)}</div>
-          <div className="time-text">{formatTime(result.now)}</div>
+          <span className="date-text">{formatDate(result.now)}</span>
+          <span className="time-text">{formatTime(result.now)}</span>
         </div>
-        <button className="icon-btn" onClick={goSetting} title="修改设置">
-          ⚙️
-        </button>
+        <div className="top-btns">
+          <button className="icon-btn" onClick={goSetting} title="修改设置">⚙️</button>
+          <button className="icon-btn" onClick={handleReset} title="清空重来">🧹</button>
+        </div>
       </div>
 
-      {/* 状态大卡片 */}
-      <div
-        className="status-card"
-        style={{ background: statusTheme.gradient }}
-      >
+      {/* 状态大卡片 + 合并秒薪 */}
+      <div className="status-card" style={{ background: statusTheme.gradient }}>
         <div className="status-card-inner">
           <div className="status-left">
             <div className="status-emoji">{result.statusEmoji}</div>
@@ -131,21 +124,19 @@ const HomePage: React.FC = () => {
             </div>
             <div className="monthly-info small">
               <span className="m-label">每日</span>
-              <span className="m-value">{dailyHours}h · {result.monthWorkDays}工作日/月</span>
+              <span className="m-value">{dailyHours}h · {result.monthWorkDays}天/月</span>
             </div>
           </div>
-        </div>
 
-        {/* 秒薪展示 */}
-        <div className="persec-box">
-          <div className="persec-label">你的秒薪 👇</div>
-          <div className="persec-value" key={`ps-${tick}`}>
-            <span className="currency">¥</span>
-            <span className="number">{result.perSecond.toFixed(4)}</span>
-            <span className="per">/ 秒</span>
-          </div>
-          <div className="persec-hint">
-            每呼吸一次，就进账 <b>¥{(result.perSecond * 3).toFixed(4)}</b> 😆
+          {/* 秒薪展示（内嵌到卡片底部，同一行布局） */}
+          <div className="persec-box">
+            <span className="persec-label">秒薪</span>
+            <div className="persec-value" key={`ps-${tick}`}>
+              <span className="currency">¥</span>
+              <span className="number">{result.perSecond.toFixed(4)}</span>
+              <span className="per">/s</span>
+            </div>
+            <span className="persec-hint">呼吸→+<b>¥{(result.perSecond * 3).toFixed(4)}</b></span>
           </div>
         </div>
       </div>
@@ -153,7 +144,7 @@ const HomePage: React.FC = () => {
       {/* 今日进度条 */}
       <div className="progress-card">
         <div className="progress-head">
-          <span>📈 今日打工进度</span>
+          <span>📈 今日进度</span>
           <span className="progress-pct">{result.todayProgress.toFixed(1)}%</span>
         </div>
         <div className="progress-track">
@@ -162,7 +153,7 @@ const HomePage: React.FC = () => {
             style={{
               width: `${result.todayProgress}%`,
               background: statusTheme.gradient,
-              boxShadow: `0 0 14px ${statusTheme.glow}`,
+              boxShadow: `0 0 10px ${statusTheme.glow}`,
             }}
           />
           <div className="progress-kitty" style={{ left: `${Math.min(result.todayProgress, 96)}%` }}>
@@ -170,114 +161,90 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         {!result.isWorkDay ? (
-          <div className="progress-tip weekend">
-            🎉 今天是休息日，好好放松吧！
-          </div>
+          <div className="progress-tip weekend">🎉 今天是休息日，好好放松吧！</div>
         ) : result.todayProgress >= 100 ? (
-          <div className="progress-tip done">
-            ✅ 今日工时已拉满，下班就冲！
-          </div>
+          <div className="progress-tip done">✅ 今日工时已拉满</div>
         ) : (
           <div className="progress-tip">
-            还有 <b>{(100 - result.todayProgress).toFixed(1)}%</b> 的今日财富等你解锁~
+            还有 <b>{(100 - result.todayProgress).toFixed(1)}%</b> 财富待解锁~
           </div>
         )}
       </div>
 
-      {/* 统计卡片组 */}
+      {/* 统计卡片组 - 一行 3 列（今日 / 本月 / 今年） */}
       <div className="stats-grid">
-        {/* 今日已赚 */}
+        {/* 今日 */}
         <div className="stat-card stat-today">
           <div className="stat-head">
-            <span className="stat-emoji">🌞</span>
-            <span className="stat-title">今日已赚</span>
+            <div className="stat-head-left">
+              <span className="stat-emoji">🌞</span>
+              <span className="stat-title">今日</span>
+            </div>
           </div>
-          <div className="stat-value" key={`t-${tick}`}>
+          <div className="stat-value" key={`t-${tick}`} title={`¥${formatMoney(result.todayEarned)}`}>
             ¥{formatMoney(result.todayEarned)}
           </div>
-          <div className="stat-foot">
-            {result.isWorkDay
-              ? `今日目标：¥${formatMoney(settings.monthlySalary / result.monthWorkDays)}`
-              : '休息日不打工~'}
-          </div>
+          <div className="stat-foot">目标 ¥{formatMoney(dailySalary)}</div>
           {result.isWorkDay && result.todayEarned > 0 && (
             <div className="mini-bar">
               <div
                 className="mini-fill"
                 style={{
-                  width: `${Math.min(
-                    100,
-                    (result.todayEarned / (settings.monthlySalary / result.monthWorkDays)) * 100
-                  )}%`,
+                  width: `${Math.min(100, (result.todayEarned / dailySalary) * 100)}%`,
                 }}
               />
             </div>
           )}
         </div>
 
-        {/* 本月已赚 */}
+        {/* 本月 */}
         <div className="stat-card stat-month">
           <div className="stat-head">
-            <span className="stat-emoji">🗓️</span>
-            <span className="stat-title">本月已赚</span>
+            <div className="stat-head-left">
+              <span className="stat-emoji">🗓️</span>
+              <span className="stat-title">本月</span>
+            </div>
           </div>
-          <div className="stat-value" key={`m-${tick}`}>
+          <div className="stat-value" key={`m-${tick}`} title={`¥${formatMoney(result.monthEarned)}`}>
             ¥{formatMoney(result.monthEarned)}
           </div>
-          <div className="stat-foot">
-            本月目标：¥{formatMoney(settings.monthlySalary)}
-          </div>
+          <div className="stat-foot">目标 ¥{formatMoney(settings.monthlySalary)}</div>
           <div className="mini-bar">
             <div
               className="mini-fill m-fill"
-              style={{
-                width: `${Math.min(100, (result.monthEarned / settings.monthlySalary) * 100)}%`,
-              }}
+              style={{ width: `${Math.min(100, (result.monthEarned / settings.monthlySalary) * 100)}%` }}
             />
           </div>
         </div>
 
-        {/* 今年已赚 */}
-        <div className="stat-card stat-year full">
+        {/* 今年 */}
+        <div className="stat-card stat-year">
           <div className="stat-head">
-            <span className="stat-emoji">🎆</span>
-            <span className="stat-title">今年已赚</span>
-            <span className="year-pill">{result.now.getFullYear()}</span>
+            <div className="stat-head-left">
+              <span className="stat-emoji">🎆</span>
+              <span className="stat-title">今年</span>
+            </div>
+            <span className="year-pill">{String(result.now.getFullYear()).slice(2)}</span>
           </div>
-          <div className="stat-value year" key={`y-${tick}`}>
+          <div className="stat-value year" key={`y-${tick}`} title={`¥${formatMoney(result.yearEarned)}`}>
             ¥{formatMoney(result.yearEarned)}
           </div>
-          <div className="stat-foot">
-            全年目标：¥{formatMoney(settings.monthlySalary * 12)}
-          </div>
+          <div className="stat-foot">目标 ¥{formatMoney(settings.monthlySalary * 12)}</div>
           <div className="mini-bar year-bar">
             <div
               className="mini-fill y-fill"
               style={{
-                width: `${Math.min(
-                  100,
-                  (result.yearEarned / (settings.monthlySalary * 12)) * 100
-                )}%`,
+                width: `${Math.min(100, (result.yearEarned / (settings.monthlySalary * 12)) * 100)}%`,
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* 打工人语录 */}
-      <div className="quote-card">
+      {/* 打工人语录（单行） */}
+      <div className="quote-line">
         <span className="quote-icon">💬</span>
         <span className="quote-text">{pickQuote(result)}</span>
-      </div>
-
-      {/* 底部工具栏 */}
-      <div className="home-footer">
-        <button className="ghost-btn" onClick={goSetting}>
-          ✏️ 修改设置
-        </button>
-        <button className="ghost-btn danger" onClick={handleReset}>
-          🧹 清空重来
-        </button>
       </div>
     </div>
   );
@@ -285,18 +252,12 @@ const HomePage: React.FC = () => {
 
 function pickQuote(r: SalaryResult): string {
   switch (r.status) {
-    case 'beforeWork':
-      return '早上好！深呼吸，今天也是元气满满的打工人~ 🌱';
-    case 'working':
-      return '保持专注！你的账户余额正在疯狂增长 📈💸';
-    case 'lunch':
-      return '好好吃饭！吃饱了才有力气继续赚钱 🍱✨';
-    case 'offWork':
-      return '下班万岁！今天的你已经超棒啦，去奖励自己吧 🎁';
-    case 'weekend':
-      return '周末就是要躺平！工作是别人的，命是自己的 🛌💖';
-    default:
-      return '加油！每一秒都离财富自由更近一步 💰🚀';
+    case 'beforeWork': return '早上好！今天也要元气满满哦 🌱';
+    case 'working':    return '保持专注！你的余额在疯狂增长 📈💸';
+    case 'lunch':      return '好好吃饭！吃饱才有力气继续赚 🍱✨';
+    case 'offWork':    return '下班万岁！今天的你超棒哒 🎁';
+    case 'weekend':    return '周末躺平！工作是别人的，命是自己的 🛌💖';
+    default:           return '加油！每一秒都离财富自由更近 💰🚀';
   }
 }
 

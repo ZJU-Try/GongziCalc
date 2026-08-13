@@ -1,12 +1,16 @@
 /* ============================================================
-   首页 - 漫画可爱风 + 实时数据展示
+   首页 - 漫画可爱风 + 单屏压缩版
    ============================================================ */
 
 .home-page {
   position: relative;
-  min-height: 100vh;
-  padding: 20px 18px 80px;
-  overflow-x: hidden;
+  height: 100vh;
+  height: 100dvh; /* 移动端更精准 */
+  padding: 10px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
   background:
     radial-gradient(circle at 5% 5%, #FFD1DC 0%, transparent 30%),
     radial-gradient(circle at 95% 10%, #C9E4FF 0%, transparent 35%),
@@ -16,7 +20,7 @@
 
 /* 加载页 */
 .home-loading {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +30,7 @@
 }
 
 .loading-cat {
-  font-size: 72px;
+  font-size: 64px;
   animation: bounce-soft 1.6s ease-in-out infinite;
 }
 
@@ -35,7 +39,7 @@
   font-weight: 700;
 }
 
-/* ---------- 装饰泡泡 ---------- */
+/* ---------- 装饰泡泡（缩减） ---------- */
 .bubbles {
   position: absolute;
   inset: 0;
@@ -46,30 +50,28 @@
 
 .bubble {
   position: absolute;
-  font-size: 28px;
-  opacity: 0.35;
+  font-size: 20px;
+  opacity: 0.3;
   animation: float-up linear infinite;
 }
 
-.bubble.b1 { top: 12%;  left: 6%;  animation-duration: 10s; animation-delay: -1s; }
-.bubble.b2 { top: 28%;  right: 8%; animation-duration: 13s; animation-delay: -4s; font-size: 32px; }
-.bubble.b3 { top: 55%;  left: 4%;  animation-duration: 11s; animation-delay: -2s; }
-.bubble.b4 { top: 72%;  right: 6%; animation-duration: 12s; animation-delay: -6s; font-size: 24px; }
-.bubble.b5 { top: 40%;  right: 18%; animation-duration: 14s; animation-delay: -3s; font-size: 22px; }
+.bubble.b1 { top: 14%; left: 4%;  animation-duration: 12s; animation-delay: -1s; }
+.bubble.b2 { top: 30%; right: 6%; animation-duration: 14s; animation-delay: -5s; }
+.bubble.b3 { top: 60%; left: 3%;  animation-duration: 13s; animation-delay: -3s; font-size: 18px;}
+.bubble.b4 { display: none; }
+.bubble.b5 { display: none; }
 
 @keyframes float-up {
   0%   { transform: translateY(30px) rotate(0deg); opacity: 0; }
-  15%  { opacity: 0.35; }
-  100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
+  20%  { opacity: 0.3; }
+  100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
 }
 
-/* 所有内容都在泡泡之上 */
 .home-topbar,
 .status-card,
 .progress-card,
 .stats-grid,
-.quote-card,
-.home-footer {
+.quote-line {
   position: relative;
   z-index: 1;
 }
@@ -79,82 +81,91 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  flex-shrink: 0;
 }
 
 .date-box {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   border: 2px solid #FFD6E3;
-  border-radius: 16px;
-  padding: 8px 14px;
-  box-shadow: 0 4px 0 #FFB8CE;
+  border-radius: 12px;
+  padding: 5px 12px;
+  box-shadow: 0 3px 0 #FFB8CE;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .date-text {
-  font-size: 13px;
+  font-size: 11px;
   color: #A06E82;
   font-weight: 700;
 }
 
 .time-text {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 900;
   color: #FF5C8A;
   letter-spacing: 1px;
   font-variant-numeric: tabular-nums;
 }
 
+.top-btns {
+  display: flex;
+  gap: 6px;
+}
+
 .icon-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   background: #FFFFFF;
-  border: 3px solid #FFD6E3;
-  box-shadow: 0 4px 0 #FFB8CE;
-  font-size: 22px;
+  border: 2px solid #FFD6E3;
+  box-shadow: 0 3px 0 #FFB8CE;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform .12s ease;
+  padding: 0;
 }
 
 .icon-btn:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #FFB8CE;
+  box-shadow: 0 1px 0 #FFB8CE;
 }
 
-/* ---------- 状态大卡片 ---------- */
+/* ---------- 状态大卡片（紧凑 + 合并秒薪） ---------- */
 .status-card {
-  border-radius: 28px;
-  padding: 3px;
+  border-radius: 20px;
+  padding: 2px;
   box-shadow:
-    0 8px 0 rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(255, 120, 160, 0.2);
-  margin-bottom: 18px;
+    0 5px 0 rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(255, 120, 160, 0.18);
+  flex-shrink: 0;
 }
 
 .status-card-inner {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 25px;
-  padding: 18px;
-  display: flex;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 18px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
   backdrop-filter: blur(10px);
 }
 
 .status-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .status-emoji {
-  font-size: 48px;
+  font-size: 34px;
   line-height: 1;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.12));
   animation: wiggle 2s ease-in-out infinite;
 }
 
@@ -164,16 +175,16 @@
 }
 
 .status-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #9A8A92;
   font-weight: 700;
 }
 
 .status-text {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 900;
   letter-spacing: 1px;
-  margin-top: 2px;
+  margin-top: 1px;
   text-shadow: 1px 1px 0 #FFFFFF;
 }
 
@@ -181,102 +192,108 @@
   text-align: right;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 1px;
 }
 
 .monthly-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .monthly-info.small .m-value {
-  font-size: 12px;
+  font-size: 10px;
   color: #8A7A82;
 }
 
 .m-label {
-  font-size: 11px;
+  font-size: 10px;
   color: #A08A94;
   font-weight: 700;
 }
 
 .m-value {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 900;
   color: #3F2A35;
 }
 
-/* 秒薪大展示 */
+/* 秒薪展示（内嵌在状态卡第二行，占整行） */
 .persec-box {
-  background: rgba(255, 255, 255, 0.96);
-  margin: 0 12px 14px;
-  border-radius: 20px;
-  padding: 16px 20px;
+  grid-column: 1 / -1;
+  background: #FFF9FB;
+  border-radius: 14px;
+  padding: 8px 12px;
   text-align: center;
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 2px dashed #FFC8D8;
 }
 
 .persec-label {
   color: #8A7A82;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  margin-bottom: 6px;
+  flex-shrink: 0;
 }
 
 .persec-value {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
+  flex: 1;
 }
 
 .persec-value .currency {
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 900;
   color: #FF5C8A;
 }
 
 .persec-value .number {
-  font-size: 40px;
+  font-size: 26px;
   font-weight: 900;
   color: #FF5C8A;
-  text-shadow: 2px 2px 0 #FFF0F5, 3px 3px 0 rgba(255, 92, 138, 0.15);
+  text-shadow: 1px 1px 0 #FFF0F5, 2px 2px 0 rgba(255, 92, 138, 0.12);
   animation: coin-pop .5s ease;
 }
 
 .persec-value .per {
-  font-size: 16px;
+  font-size: 12px;
   color: #A08A94;
   font-weight: 700;
 }
 
 @keyframes coin-pop {
-  0%   { transform: scale(0.9); opacity: 0.4; }
-  100% { transform: scale(1);   opacity: 1; }
+  0%   { transform: scale(0.94); opacity: 0.5; }
+  100% { transform: scale(1);    opacity: 1; }
 }
 
 .persec-hint {
-  margin-top: 8px;
   color: #A06E82;
-  font-size: 13px;
+  font-size: 11px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .persec-hint b {
   color: #FF5C8A;
-  font-size: 14px;
+  font-size: 12px;
 }
 
-/* ---------- 进度条卡片 ---------- */
+/* ---------- 进度条卡片（压缩） ---------- */
 .progress-card {
   background: #FFFFFF;
-  border: 3px solid #FFD6E3;
-  border-radius: 22px;
-  padding: 16px 18px;
-  margin-bottom: 18px;
-  box-shadow: 0 6px 0 #FFB8CE, 0 10px 22px rgba(255, 130, 160, 0.15);
+  border: 2px solid #FFD6E3;
+  border-radius: 16px;
+  padding: 8px 12px 10px;
+  box-shadow: 0 4px 0 #FFB8CE, 0 6px 14px rgba(255, 130, 160, 0.14);
+  flex-shrink: 0;
 }
 
 .progress-head {
@@ -285,18 +302,19 @@
   align-items: center;
   font-weight: 700;
   color: #9A6E80;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
 }
 
 .progress-pct {
   color: #FF5C8A;
   font-weight: 900;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .progress-track {
   position: relative;
-  height: 18px;
+  height: 14px;
   background: #FFF0F5;
   border-radius: 999px;
   overflow: visible;
@@ -316,9 +334,9 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 24px;
+  font-size: 18px;
   transition: left .8s cubic-bezier(.2,.9,.3,1.1);
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
   animation: kitty-bounce 0.8s ease-in-out infinite;
 }
 
@@ -328,9 +346,9 @@
 }
 
 .progress-tip {
-  margin-top: 10px;
+  margin-top: 6px;
   color: #8A7A82;
-  font-size: 13px;
+  font-size: 11px;
   text-align: center;
 }
 
@@ -348,101 +366,115 @@
   font-weight: 700;
 }
 
-/* ---------- 统计卡片组 ---------- */
+/* ---------- 统计卡片组（3 列一行） ---------- */
 .stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .stat-card {
   background: #FFFFFF;
-  border-radius: 22px;
-  padding: 16px;
-  border: 3px solid;
-  box-shadow: 0 6px 0;
+  border-radius: 14px;
+  padding: 8px 8px 10px;
+  border: 2px solid;
+  box-shadow: 0 4px 0;
   position: relative;
   overflow: hidden;
-}
-
-.stat-card.full {
-  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .stat-today {
   border-color: #FFD6A0;
-  box-shadow-color: #FFB347;
   background: linear-gradient(180deg, #FFFFFF 0%, #FFF9EE 100%);
-  box-shadow: 0 6px 0 #FFB347, 0 10px 20px rgba(255, 150, 70, 0.15);
+  box-shadow: 0 4px 0 #FFB347, 0 6px 14px rgba(255, 150, 70, 0.12);
 }
 
 .stat-month {
   border-color: #BFE0FF;
   background: linear-gradient(180deg, #FFFFFF 0%, #F0F8FF 100%);
-  box-shadow: 0 6px 0 #7FB8FF, 0 10px 20px rgba(100, 160, 255, 0.15);
+  box-shadow: 0 4px 0 #7FB8FF, 0 6px 14px rgba(100, 160, 255, 0.12);
 }
 
 .stat-year {
   border-color: #D9C2F0;
   background: linear-gradient(180deg, #FFFFFF 0%, #F7F0FF 100%);
-  box-shadow: 0 6px 0 #B18CD6, 0 10px 20px rgba(140, 100, 200, 0.15);
+  box-shadow: 0 4px 0 #B18CD6, 0 6px 14px rgba(140, 100, 200, 0.12);
 }
 
 .stat-head {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 4px;
+  margin-bottom: 4px;
+  justify-content: space-between;
+}
+
+.stat-head-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .stat-emoji {
-  font-size: 22px;
+  font-size: 16px;
+  flex-shrink: 0;
 }
 
 .stat-title {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
   color: #8A7A82;
+  white-space: nowrap;
 }
 
 .year-pill {
-  margin-left: auto;
-  font-size: 11px;
+  font-size: 9px;
   background: #E8DFFB;
   color: #7A42B8;
-  padding: 3px 10px;
+  padding: 1px 6px;
   border-radius: 999px;
   font-weight: 900;
+  flex-shrink: 0;
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 16px;
   font-weight: 900;
   color: #3F2A35;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
-  word-break: break-all;
   animation: coin-pop .5s ease;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-value.year {
-  font-size: 34px;
+  font-size: 15px;
   color: #7A42B8;
-  text-shadow: 2px 2px 0 #F0E6FF;
+  text-shadow: 1px 1px 0 #F0E6FF;
 }
 
 .stat-foot {
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: 4px;
+  font-size: 9px;
   color: #A09098;
   font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mini-bar {
-  margin-top: 10px;
-  height: 10px;
+  margin-top: 5px;
+  height: 5px;
   background: #F7EFF3;
   border-radius: 999px;
   overflow: hidden;
@@ -467,67 +499,65 @@
   background: #F4EDFB;
 }
 
-/* ---------- 语录卡片 ---------- */
-.quote-card {
+/* ---------- 语录（单行小标签） ---------- */
+.quote-line {
+  margin-top: auto;
   background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-  border: 3px solid #FFD54F;
-  border-radius: 22px;
-  padding: 14px 18px;
+  border: 2px solid #FFD54F;
+  border-radius: 12px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 6px 0 #FFB74D, 0 10px 22px rgba(255, 180, 80, 0.2);
+  gap: 8px;
+  box-shadow: 0 4px 0 #FFB74D;
+  flex-shrink: 0;
 }
 
 .quote-icon {
-  font-size: 28px;
+  font-size: 18px;
   flex-shrink: 0;
 }
 
 .quote-text {
   color: #8A6300;
   font-weight: 700;
-  line-height: 1.5;
-  font-size: 14px;
+  line-height: 1.3;
+  font-size: 11px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ---------- 底部按钮 ---------- */
-.home-footer {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
+/* ---------- 复用 bounce ---------- */
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-6px) rotate(4deg); }
 }
 
-.ghost-btn {
-  padding: 12px 18px;
-  border-radius: 16px;
-  background: #FFFFFF;
-  border: 2px solid #FFD6E3;
-  color: #9A6E80;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  box-shadow: 0 4px 0 #FFB8CE;
-  transition: transform .12s ease;
+/* ---------- 小屏适配（<380px 再挤一点） ---------- */
+@media (max-width: 380px) {
+  .home-page { padding: 8px 10px; gap: 8px; }
+  .status-emoji { font-size: 28px; }
+  .status-text { font-size: 16px; }
+  .m-value { font-size: 12px; }
+  .persec-value .number { font-size: 22px; }
+  .persec-label, .persec-hint { font-size: 10px; }
+  .stat-value { font-size: 14px; }
+  .stat-value.year { font-size: 13px; }
+  .stat-title { font-size: 10px; }
+  .progress-head, .progress-tip { font-size: 11px; }
+  .quote-text { font-size: 10px; }
 }
 
-.ghost-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #FFB8CE;
-}
-
-.ghost-btn.danger {
-  border-color: #FFCACA;
-  color: #D45151;
-  box-shadow: 0 4px 0 #F1A8A8;
-}
-
-/* ---------- 小屏适配 ---------- */
-@media (max-width: 360px) {
-  .persec-value .number { font-size: 32px; }
-  .stat-value { font-size: 22px; }
-  .stat-value.year { font-size: 28px; }
-  .status-text { font-size: 18px; }
+/* 大屏(>640px)居中限制最大高度，保持单屏观感 */
+@media (min-width: 640px) {
+  .home-page {
+    max-width: 480px;
+    max-height: 900px;
+    margin: 0 auto;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    margin-top: 12px;
+  }
 }
