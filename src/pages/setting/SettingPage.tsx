@@ -138,7 +138,7 @@ const SettingPage: React.FC = () => {
   const dailyHours = (getDailyWorkSeconds(form) / 3600).toFixed(1);
 
   return (
-    <div className="setting-page page-scrollable">
+    <div className="setting-page">
       <div className="setting-inner">
         <form className="setting-form" onSubmit={handleSubmit}>
           {/* 月薪 + 年终奖（合并卡片） */}

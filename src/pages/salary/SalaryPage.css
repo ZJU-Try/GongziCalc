@@ -3,7 +3,8 @@
    ============================================================ */
 
 .salary-page {
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
   background:
     radial-gradient(circle at 12% 6%, #FFD1DC 0%, transparent 32%),
     radial-gradient(circle at 88% 14%, #C9E4FF 0%, transparent 36%),

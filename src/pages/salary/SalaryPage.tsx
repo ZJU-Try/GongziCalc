@@ -27,7 +27,7 @@ const SalaryPage: React.FC = () => {
 
   if (!settings || !summary) {
     return (
-      <div className="salary-page page-scrollable">
+      <div className="salary-page">
         <div className="salary-empty">
           <div className="empty-emoji">🧐</div>
           <p>还没有设置哦，先去设置一下吧~</p>
