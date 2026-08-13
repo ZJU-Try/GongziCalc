@@ -1,0 +1,533 @@
+/* ============================================================
+   首页 - 漫画可爱风 + 实时数据展示
+   ============================================================ */
+
+.home-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 20px 18px 80px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 5% 5%, #FFD1DC 0%, transparent 30%),
+    radial-gradient(circle at 95% 10%, #C9E4FF 0%, transparent 35%),
+    radial-gradient(circle at 50% 100%, #FFF1B8 0%, transparent 40%),
+    linear-gradient(180deg, #FFE5EC 0%, #FFF0F5 45%, #E8F4FD 100%);
+}
+
+/* 加载页 */
+.home-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(180deg, #FFE5EC, #FFF0F5);
+}
+
+.loading-cat {
+  font-size: 72px;
+  animation: bounce-soft 1.6s ease-in-out infinite;
+}
+
+.loading-cat + p {
+  color: #FF5C8A;
+  font-weight: 700;
+}
+
+/* ---------- 装饰泡泡 ---------- */
+.bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.bubble {
+  position: absolute;
+  font-size: 28px;
+  opacity: 0.35;
+  animation: float-up linear infinite;
+}
+
+.bubble.b1 { top: 12%;  left: 6%;  animation-duration: 10s; animation-delay: -1s; }
+.bubble.b2 { top: 28%;  right: 8%; animation-duration: 13s; animation-delay: -4s; font-size: 32px; }
+.bubble.b3 { top: 55%;  left: 4%;  animation-duration: 11s; animation-delay: -2s; }
+.bubble.b4 { top: 72%;  right: 6%; animation-duration: 12s; animation-delay: -6s; font-size: 24px; }
+.bubble.b5 { top: 40%;  right: 18%; animation-duration: 14s; animation-delay: -3s; font-size: 22px; }
+
+@keyframes float-up {
+  0%   { transform: translateY(30px) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.35; }
+  100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
+}
+
+/* 所有内容都在泡泡之上 */
+.home-topbar,
+.status-card,
+.progress-card,
+.stats-grid,
+.quote-card,
+.home-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- 顶部工具栏 ---------- */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.date-box {
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid #FFD6E3;
+  border-radius: 16px;
+  padding: 8px 14px;
+  box-shadow: 0 4px 0 #FFB8CE;
+}
+
+.date-text {
+  font-size: 13px;
+  color: #A06E82;
+  font-weight: 700;
+}
+
+.time-text {
+  font-size: 20px;
+  font-weight: 900;
+  color: #FF5C8A;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  border: 3px solid #FFD6E3;
+  box-shadow: 0 4px 0 #FFB8CE;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .12s ease;
+}
+
+.icon-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #FFB8CE;
+}
+
+/* ---------- 状态大卡片 ---------- */
+.status-card {
+  border-radius: 28px;
+  padding: 3px;
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(255, 120, 160, 0.2);
+  margin-bottom: 18px;
+}
+
+.status-card-inner {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.status-emoji {
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+.status-label {
+  font-size: 12px;
+  color: #9A8A92;
+  font-weight: 700;
+}
+
+.status-text {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-top: 2px;
+  text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.status-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monthly-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.monthly-info.small .m-value {
+  font-size: 12px;
+  color: #8A7A82;
+}
+
+.m-label {
+  font-size: 11px;
+  color: #A08A94;
+  font-weight: 700;
+}
+
+.m-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: #3F2A35;
+}
+
+/* 秒薪大展示 */
+.persec-box {
+  background: rgba(255, 255, 255, 0.96);
+  margin: 0 12px 14px;
+  border-radius: 20px;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+
+.persec-label {
+  color: #8A7A82;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.persec-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.persec-value .currency {
+  font-size: 22px;
+  font-weight: 900;
+  color: #FF5C8A;
+}
+
+.persec-value .number {
+  font-size: 40px;
+  font-weight: 900;
+  color: #FF5C8A;
+  text-shadow: 2px 2px 0 #FFF0F5, 3px 3px 0 rgba(255, 92, 138, 0.15);
+  animation: coin-pop .5s ease;
+}
+
+.persec-value .per {
+  font-size: 16px;
+  color: #A08A94;
+  font-weight: 700;
+}
+
+@keyframes coin-pop {
+  0%   { transform: scale(0.9); opacity: 0.4; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.persec-hint {
+  margin-top: 8px;
+  color: #A06E82;
+  font-size: 13px;
+}
+
+.persec-hint b {
+  color: #FF5C8A;
+  font-size: 14px;
+}
+
+/* ---------- 进度条卡片 ---------- */
+.progress-card {
+  background: #FFFFFF;
+  border: 3px solid #FFD6E3;
+  border-radius: 22px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 0 #FFB8CE, 0 10px 22px rgba(255, 130, 160, 0.15);
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: #9A6E80;
+  margin-bottom: 12px;
+}
+
+.progress-pct {
+  color: #FF5C8A;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.progress-track {
+  position: relative;
+  height: 18px;
+  background: #FFF0F5;
+  border-radius: 999px;
+  overflow: visible;
+  border: 2px solid #FFD6E3;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  transition: width .8s cubic-bezier(.2,.9,.3,1.1);
+}
+
+.progress-kitty {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  transition: left .8s cubic-bezier(.2,.9,.3,1.1);
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+  animation: kitty-bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes kitty-bounce {
+  0%, 100% { transform: translate(-50%, -60%); }
+  50%      { transform: translate(-50%, -40%); }
+}
+
+.progress-tip {
+  margin-top: 10px;
+  color: #8A7A82;
+  font-size: 13px;
+  text-align: center;
+}
+
+.progress-tip b {
+  color: #FF5C8A;
+}
+
+.progress-tip.weekend {
+  color: #7A42B8;
+  font-weight: 700;
+}
+
+.progress-tip.done {
+  color: #2E9E5C;
+  font-weight: 700;
+}
+
+/* ---------- 统计卡片组 ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  background: #FFFFFF;
+  border-radius: 22px;
+  padding: 16px;
+  border: 3px solid;
+  box-shadow: 0 6px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card.full {
+  grid-column: 1 / -1;
+}
+
+.stat-today {
+  border-color: #FFD6A0;
+  box-shadow-color: #FFB347;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9EE 100%);
+  box-shadow: 0 6px 0 #FFB347, 0 10px 20px rgba(255, 150, 70, 0.15);
+}
+
+.stat-month {
+  border-color: #BFE0FF;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F0F8FF 100%);
+  box-shadow: 0 6px 0 #7FB8FF, 0 10px 20px rgba(100, 160, 255, 0.15);
+}
+
+.stat-year {
+  border-color: #D9C2F0;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F0FF 100%);
+  box-shadow: 0 6px 0 #B18CD6, 0 10px 20px rgba(140, 100, 200, 0.15);
+}
+
+.stat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.stat-emoji {
+  font-size: 22px;
+}
+
+.stat-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A7A82;
+}
+
+.year-pill {
+  margin-left: auto;
+  font-size: 11px;
+  background: #E8DFFB;
+  color: #7A42B8;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #3F2A35;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+  animation: coin-pop .5s ease;
+  line-height: 1.2;
+}
+
+.stat-value.year {
+  font-size: 34px;
+  color: #7A42B8;
+  text-shadow: 2px 2px 0 #F0E6FF;
+}
+
+.stat-foot {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #A09098;
+  font-weight: 600;
+}
+
+.mini-bar {
+  margin-top: 10px;
+  height: 10px;
+  background: #F7EFF3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFCF7A, #FF9843);
+  border-radius: 999px;
+  transition: width .8s cubic-bezier(.2,.9,.3,1.1);
+}
+
+.mini-fill.m-fill {
+  background: linear-gradient(90deg, #A5D8FF, #5AA8FF);
+}
+
+.mini-fill.y-fill {
+  background: linear-gradient(90deg, #D0B3F6, #9670D0);
+}
+
+.year-bar {
+  background: #F4EDFB;
+}
+
+/* ---------- 语录卡片 ---------- */
+.quote-card {
+  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+  border: 3px solid #FFD54F;
+  border-radius: 22px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 0 #FFB74D, 0 10px 22px rgba(255, 180, 80, 0.2);
+}
+
+.quote-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.quote-text {
+  color: #8A6300;
+  font-weight: 700;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* ---------- 底部按钮 ---------- */
+.home-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.ghost-btn {
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  border: 2px solid #FFD6E3;
+  color: #9A6E80;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  box-shadow: 0 4px 0 #FFB8CE;
+  transition: transform .12s ease;
+}
+
+.ghost-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #FFB8CE;
+}
+
+.ghost-btn.danger {
+  border-color: #FFCACA;
+  color: #D45151;
+  box-shadow: 0 4px 0 #F1A8A8;
+}
+
+/* ---------- 小屏适配 ---------- */
+@media (max-width: 360px) {
+  .persec-value .number { font-size: 32px; }
+  .stat-value { font-size: 22px; }
+  .stat-value.year { font-size: 28px; }
+  .status-text { font-size: 18px; }
+}

@@ -1,0 +1,290 @@
+/* ============================================================
+   设置页面 - 漫画可爱风
+   ============================================================ */
+
+.setting-page {
+  min-height: 100vh;
+  padding: 24px 20px 60px;
+  background:
+    radial-gradient(circle at 10% 10%, #FFD1DC 0%, transparent 35%),
+    radial-gradient(circle at 90% 15%, #C9E4FF 0%, transparent 40%),
+    radial-gradient(circle at 50% 90%, #FFF1B8 0%, transparent 40%),
+    linear-gradient(180deg, #FFE5EC 0%, #FFF0F5 50%, #E8F4FD 100%);
+}
+
+/* ---------- 顶部 ---------- */
+.setting-header {
+  text-align: center;
+  padding: 12px 0 24px;
+}
+
+.mascot {
+  font-size: 64px;
+  line-height: 1;
+  display: inline-block;
+  animation: bounce-soft 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 6px 10px rgba(255, 150, 180, 0.35));
+}
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-8px) rotate(4deg); }
+}
+
+.setting-title {
+  margin: 8px 0 6px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #FF5C8A;
+  text-shadow: 2px 2px 0 #FFFFFF, 4px 4px 0 rgba(255, 92, 138, 0.18);
+  letter-spacing: 1px;
+}
+
+.setting-subtitle {
+  margin: 0;
+  color: #7A6A73;
+  font-size: 14px;
+}
+
+/* ---------- 表单卡片 ---------- */
+.setting-form {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: 3px solid #FFD6E3;
+  border-radius: 22px;
+  box-shadow:
+    0 6px 0 #FFB8CE,
+    0 10px 22px rgba(255, 130, 160, 0.18);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.form-card.filled {
+  border-color: #A5D8FF;
+  box-shadow: 0 6px 0 #7FB8FF, 0 10px 22px rgba(100, 160, 255, 0.18);
+}
+
+.form-card:focus-within {
+  transform: translateY(-2px);
+  border-color: #FFB347;
+  box-shadow: 0 8px 0 #FF9843, 0 12px 26px rgba(255, 150, 70, 0.22);
+}
+
+.form-icon {
+  font-size: 30px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFF0F5, #FFE5EC);
+  border-radius: 16px;
+}
+
+.form-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-size: 13px;
+  color: #A06E82;
+  font-weight: 700;
+}
+
+.form-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: #FAF7F9;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #3F2A35;
+  font-family: inherit;
+}
+
+.form-input[type="time"] {
+  letter-spacing: 2px;
+}
+
+/* 下拉选择框样式 */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23FF5C8A' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
+  padding-right: 36px;
+  letter-spacing: 2px;
+}
+
+.form-select:focus {
+  background-color: #FFF8FA;
+}
+
+/* ---------- 午休合并行 ---------- */
+.lunch-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lunch-range .form-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.range-sep {
+  flex-shrink: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #FF8FB1;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.form-input::placeholder {
+  color: #D0B8C1;
+  font-weight: 500;
+}
+
+/* ---------- 预览卡片 ---------- */
+.preview-card {
+  margin-top: 4px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #E6F4FF, #F0F8FF);
+  border: 3px dashed #7FB8FF;
+  border-radius: 20px;
+}
+
+.preview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-label {
+  color: #5A7AA3;
+  font-weight: 700;
+}
+
+.preview-value {
+  color: #2E5EAA;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+/* ---------- 错误 / 成功气泡 ---------- */
+.error-bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #FFF1F1;
+  border: 2px solid #FFB4B4;
+  border-radius: 16px;
+  color: #D45151;
+  font-size: 14px;
+  font-weight: 700;
+  animation: shake .4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.error-icon {
+  font-size: 20px;
+}
+
+.success-bubble {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+  border: 2px solid #FFD54F;
+  border-radius: 16px;
+  color: #A07900;
+  font-weight: 900;
+  text-align: center;
+  animation: pop .35s ease;
+}
+
+@keyframes pop {
+  0%   { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ---------- 按钮组 ---------- */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.btn {
+  flex: 1;
+  padding: 16px 18px;
+  border: none;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  color: #9A7A88;
+  border: 3px solid #FFD6E3;
+  box-shadow: 0 5px 0 #FFB8CE;
+}
+
+.btn-secondary:active {
+  box-shadow: 0 3px 0 #FFB8CE;
+}
+
+.btn-primary {
+  flex: 1.4;
+  background: linear-gradient(135deg, #FF8FB1, #FF5C8A);
+  color: #FFFFFF;
+  box-shadow:
+    0 5px 0 #E04372,
+    0 8px 18px rgba(255, 92, 138, 0.35);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  box-shadow: 0 3px 0 #E04372, 0 5px 12px rgba(255, 92, 138, 0.35);
+}
+
+/* ---------- 底部 ---------- */
+.setting-footer {
+  text-align: center;
+  margin-top: 36px;
+  color: #B89BA7;
+  font-size: 12px;
+}
