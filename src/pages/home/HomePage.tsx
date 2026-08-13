@@ -239,7 +239,7 @@ const HomePage: React.FC = () => {
               <span className="stat-emoji">🎆</span>
               <span className="stat-title">今年</span>
             </div>
-            <span className="year-pill">{String(result.now.getFullYear()).slice(2)}</span>
+            <span className="year-pill">{result.now.getFullYear()}</span>
           </div>
           <div
             className="stat-value year"

@@ -139,7 +139,7 @@
   box-shadow:
     0 5px 0 rgba(0, 0, 0, 0.05),
     0 10px 18px rgba(255, 120, 160, 0.16);
-  flex: 1;
+  flex: 0.65;
   min-height: 0;
 }
 
@@ -401,13 +401,18 @@
   font-weight: 700;
 }
 
-/* ---------- 统计卡片组（今日更大） ---------- */
+/* ---------- 统计卡片组（今日独占一行，本月今年左右分布） ---------- */
 .stats-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
   gap: 7px;
-  flex: 1;
+  flex: 1.35;
   min-height: 0;
+}
+
+.stat-today {
+  grid-column: 1 / -1;
 }
 
 .stat-card {
@@ -470,13 +475,14 @@
 }
 
 .year-pill {
-  font-size: 9px;
+  font-size: 10px;
   background: #E8DFFB;
   color: #7A42B8;
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 999px;
   font-weight: 900;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-value {
@@ -492,9 +498,9 @@
   text-overflow: ellipsis;
 }
 
-/* 今日卡片数值更大 */
+/* 今日卡片数值更大（独占一行） */
 .stat-today .stat-value {
-  font-size: 24px;
+  font-size: 28px;
   text-shadow: 1px 1px 0 #FFF3E0;
 }
 
