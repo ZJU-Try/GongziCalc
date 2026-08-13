@@ -9,13 +9,14 @@ import {
   formatDate,
   getDailyWorkSeconds,
 } from '@/utils/salary';
+import { getAfterTaxForMonth } from '@/utils/tax';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [result, setResult] = useState<SalaryResult | null>(null);
-  const [tick, setTick] = useState(0); // 用于强制刷新
+  const [tick, setTick] = useState(0);
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -44,8 +45,6 @@ const HomePage: React.FC = () => {
     };
   }, [settings]);
 
-  const goSetting = () => navigate('/setting');
-
   const handleReset = () => {
     if (confirm('确定要清除所有设置重新来过吗？😿')) {
       clearSettings();
@@ -70,6 +69,12 @@ const HomePage: React.FC = () => {
     }
   }, [result?.status]);
 
+  // 今年税后目标（必须在 early return 之前调用 Hook）
+  const yearGoalAfter = useMemo(() => {
+    if (!settings) return 0;
+    return getAfterTaxForMonth(settings, 12).afterTaxYearToMonth;
+  }, [settings]);
+
   if (!settings || !result) {
     return (
       <div className="home-loading">
@@ -80,7 +85,8 @@ const HomePage: React.FC = () => {
   }
 
   const dailyHours = (getDailyWorkSeconds(settings) / 3600).toFixed(1);
-  const dailySalary = settings.monthlySalary / result.monthWorkDays;
+  const dailySalaryAfter = result.monthBreakdown.afterTaxSalary / Math.max(1, result.monthWorkDays);
+  const monthGoalAfter = result.monthBreakdown.afterTaxSalary;
 
   return (
     <div className="home-page">
@@ -89,8 +95,6 @@ const HomePage: React.FC = () => {
         <span className="bubble b1">💰</span>
         <span className="bubble b2">✨</span>
         <span className="bubble b3">💖</span>
-        <span className="bubble b4">⭐</span>
-        <span className="bubble b5">🪙</span>
       </div>
 
       {/* 顶部工具栏 */}
@@ -100,12 +104,11 @@ const HomePage: React.FC = () => {
           <span className="time-text">{formatTime(result.now)}</span>
         </div>
         <div className="top-btns">
-          <button className="icon-btn" onClick={goSetting} title="修改设置">⚙️</button>
           <button className="icon-btn" onClick={handleReset} title="清空重来">🧹</button>
         </div>
       </div>
 
-      {/* 状态大卡片 + 合并秒薪 */}
+      {/* 状态大卡片：左状态，右月薪(税前/税后两行)，底两行：税前秒薪 + 税后秒薪 */}
       <div className="status-card" style={{ background: statusTheme.gradient }}>
         <div className="status-card-inner">
           <div className="status-left">
@@ -118,25 +121,26 @@ const HomePage: React.FC = () => {
             </div>
           </div>
           <div className="status-right">
-            <div className="monthly-info">
-              <span className="m-label">月薪</span>
-              <span className="m-value">¥{formatMoney(settings.monthlySalary)}</span>
+            <div className="dual-row">
+              <span className="m-label">税前</span>
+              <span className="m-value before">¥{shortMoney(settings.monthlySalary)}</span>
             </div>
-            <div className="monthly-info small">
-              <span className="m-label">每日</span>
-              <span className="m-value">{dailyHours}h · {result.monthWorkDays}天/月</span>
+            <div className="dual-row">
+              <span className="m-label after-tag">税后</span>
+              <span className="m-value after">¥{shortMoney(result.monthBreakdown.afterTaxSalary)}</span>
             </div>
+            <div className="daily-hint">{dailyHours}h · {result.monthWorkDays}天/月</div>
           </div>
 
-          {/* 秒薪展示（内嵌到卡片底部，同一行布局） */}
-          <div className="persec-box">
-            <span className="persec-label">秒薪</span>
-            <div className="persec-value" key={`ps-${tick}`}>
-              <span className="currency">¥</span>
-              <span className="number">{result.perSecond.toFixed(4)}</span>
+          {/* 税后秒薪 */}
+          <div className="persec-box after">
+            <span className="persec-label">税后秒薪</span>
+            <div className="persec-value" key={`psa-${tick}`}>
+              <span className="currency a">¥</span>
+              <span className="number a">{result.perSecondAfterTax.toFixed(4)}</span>
               <span className="per">/s</span>
             </div>
-            <span className="persec-hint">呼吸→+<b>¥{(result.perSecond * 3).toFixed(4)}</b></span>
+            <span className="persec-hint">😮‍💨 呼吸 +¥{(result.perSecondAfterTax * 4).toFixed(4)}</span>
           </div>
         </div>
       </div>
@@ -161,7 +165,7 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         {!result.isWorkDay ? (
-          <div className="progress-tip weekend">🎉 今天是休息日，好好放松吧！</div>
+          <div className="progress-tip weekend">🎉 休息日，好好放松吧！</div>
         ) : result.todayProgress >= 100 ? (
           <div className="progress-tip done">✅ 今日工时已拉满</div>
         ) : (
@@ -171,7 +175,8 @@ const HomePage: React.FC = () => {
         )}
       </div>
 
-      {/* 统计卡片组 - 一行 3 列（今日 / 本月 / 今年） */}
+      {/* 统计卡片组 - 一行 3 列（今日 / 本月 / 今年）
+           每卡两行：上税后（主色大字）+ 下税前（灰色小字） */}
       <div className="stats-grid">
         {/* 今日 */}
         <div className="stat-card stat-today">
@@ -181,17 +186,20 @@ const HomePage: React.FC = () => {
               <span className="stat-title">今日</span>
             </div>
           </div>
-          <div className="stat-value" key={`t-${tick}`} title={`¥${formatMoney(result.todayEarned)}`}>
-            ¥{formatMoney(result.todayEarned)}
+          <div
+            className="stat-value"
+            key={`t-${tick}`}
+            title={`税后 ¥${formatMoney(result.todayEarnedAfterTax)} / 税前 ¥${formatMoney(result.todayEarned)}`}
+          >
+            ¥{shortMoney(result.todayEarnedAfterTax)}
           </div>
-          <div className="stat-foot">目标 ¥{formatMoney(dailySalary)}</div>
-          {result.isWorkDay && result.todayEarned > 0 && (
+          <div className="stat-value-sub">税前 ¥{shortMoney(result.todayEarned)}</div>
+          <div className="stat-foot">日标 ¥{shortMoney(dailySalaryAfter)}</div>
+          {result.isWorkDay && dailySalaryAfter > 0 && (
             <div className="mini-bar">
               <div
                 className="mini-fill"
-                style={{
-                  width: `${Math.min(100, (result.todayEarned / dailySalary) * 100)}%`,
-                }}
+                style={{ width: `${Math.min(100, (result.todayEarnedAfterTax / dailySalaryAfter) * 100)}%` }}
               />
             </div>
           )}
@@ -205,16 +213,23 @@ const HomePage: React.FC = () => {
               <span className="stat-title">本月</span>
             </div>
           </div>
-          <div className="stat-value" key={`m-${tick}`} title={`¥${formatMoney(result.monthEarned)}`}>
-            ¥{formatMoney(result.monthEarned)}
+          <div
+            className="stat-value"
+            key={`m-${tick}`}
+            title={`税后 ¥${formatMoney(result.monthEarnedAfterTax)} / 税前 ¥${formatMoney(result.monthEarned)}`}
+          >
+            ¥{shortMoney(result.monthEarnedAfterTax)}
           </div>
-          <div className="stat-foot">目标 ¥{formatMoney(settings.monthlySalary)}</div>
-          <div className="mini-bar">
-            <div
-              className="mini-fill m-fill"
-              style={{ width: `${Math.min(100, (result.monthEarned / settings.monthlySalary) * 100)}%` }}
-            />
-          </div>
+          <div className="stat-value-sub">税前 ¥{shortMoney(result.monthEarned)}</div>
+          <div className="stat-foot">月标 ¥{shortMoney(monthGoalAfter)}</div>
+          {monthGoalAfter > 0 && (
+            <div className="mini-bar">
+              <div
+                className="mini-fill m-fill"
+                style={{ width: `${Math.min(100, (result.monthEarnedAfterTax / monthGoalAfter) * 100)}%` }}
+              />
+            </div>
+          )}
         </div>
 
         {/* 今年 */}
@@ -226,34 +241,67 @@ const HomePage: React.FC = () => {
             </div>
             <span className="year-pill">{String(result.now.getFullYear()).slice(2)}</span>
           </div>
-          <div className="stat-value year" key={`y-${tick}`} title={`¥${formatMoney(result.yearEarned)}`}>
-            ¥{formatMoney(result.yearEarned)}
+          <div
+            className="stat-value year"
+            key={`y-${tick}`}
+            title={`税后 ¥${formatMoney(result.yearEarnedAfterTax)} / 税前 ¥${formatMoney(result.yearEarned)}`}
+          >
+            ¥{shortMoney(result.yearEarnedAfterTax)}
           </div>
-          <div className="stat-foot">目标 ¥{formatMoney(settings.monthlySalary * 12)}</div>
-          <div className="mini-bar year-bar">
-            <div
-              className="mini-fill y-fill"
-              style={{
-                width: `${Math.min(100, (result.yearEarned / (settings.monthlySalary * 12)) * 100)}%`,
-              }}
-            />
-          </div>
+          <div className="stat-value-sub">税前 ¥{shortMoney(result.yearEarned)}</div>
+          <div className="stat-foot">年标 ¥{shortMoney(yearGoalAfter)}</div>
+          {yearGoalAfter > 0 && (
+            <div className="mini-bar year-bar">
+              <div
+                className="mini-fill y-fill"
+                style={{ width: `${Math.min(100, (result.yearEarnedAfterTax / yearGoalAfter) * 100)}%` }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 打工人语录（单行） */}
-      <div className="quote-line">
-        <span className="quote-icon">💬</span>
-        <span className="quote-text">{pickQuote(result)}</span>
+      {/* 扣款明细 + 打工人语录（两行，仍然 fit 一屏） */}
+      <div className="bottom-strip">
+        <div className="deduct-row">
+          <span className="deduct-item">
+            <i className="dot s"></i>社保 ¥{result.monthBreakdown.socialPersonal.toFixed(0)}
+          </span>
+          <span className="deduct-item">
+            <i className="dot f"></i>公积金 ¥{result.monthBreakdown.fundPersonal.toFixed(0)}
+          </span>
+          <span className="deduct-item">
+            <i className="dot t"></i>个税 ¥{result.monthBreakdown.personalTax.toFixed(0)}
+          </span>
+          <span className="deduct-total">
+            实发 <b>¥{formatMoney(result.monthBreakdown.afterTaxSalary)}</b>
+          </span>
+        </div>
+        <div className="quote-line">
+          <span className="quote-icon">💬</span>
+          <span className="quote-text">{pickQuote(result)}</span>
+        </div>
       </div>
     </div>
   );
 };
 
+/** 短金额：<10000 显示两位小数，>=10000 显示 x.xx 万 */
+function shortMoney(n: number): string {
+  if (!isFinite(n)) return '0.00';
+  const abs = Math.abs(n);
+  if (abs < 10000) {
+    if (abs < 1) return n.toFixed(4);
+    return n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  const wan = n / 10000;
+  return `${wan.toFixed(2)}万`;
+}
+
 function pickQuote(r: SalaryResult): string {
   switch (r.status) {
     case 'beforeWork': return '早上好！今天也要元气满满哦 🌱';
-    case 'working':    return '保持专注！你的余额在疯狂增长 📈💸';
+    case 'working':    return '保持专注！你的税后余额在增长 📈💸';
     case 'lunch':      return '好好吃饭！吃饱才有力气继续赚 🍱✨';
     case 'offWork':    return '下班万岁！今天的你超棒哒 🎁';
     case 'weekend':    return '周末躺平！工作是别人的，命是自己的 🛌💖';

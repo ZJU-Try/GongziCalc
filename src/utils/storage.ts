@@ -17,13 +17,15 @@ export function saveSettings(settings: UserSettings): void {
 
 /**
  * 从本地存储读取用户设置
+ * 兼容老版本（仅含工资/时间字段），缺少的字段会用 DEFAULT_SETTINGS 补齐
  */
 export function loadSettings(): UserSettings | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    // 字段完整性校验
+
+    // 必须的 5 个基础字段都存在才认为有效
     if (
       typeof parsed.monthlySalary === 'number' &&
       typeof parsed.workStartTime === 'string' &&
@@ -31,7 +33,11 @@ export function loadSettings(): UserSettings | null {
       typeof parsed.lunchEndTime === 'string' &&
       typeof parsed.workEndTime === 'string'
     ) {
-      return parsed as UserSettings;
+      // 用默认值兜底新版本字段（社保/公积金参数）
+      return {
+        ...DEFAULT_SETTINGS,
+        ...parsed,
+      } as UserSettings;
     }
     return null;
   } catch (error) {

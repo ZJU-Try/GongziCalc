@@ -1,15 +1,14 @@
 /* ============================================================
-   首页 - 漫画可爱风 + 单屏压缩版
+   首页 - 漫画可爱风 + 单屏布局 v3（字体加大、优雅清晰）
    ============================================================ */
 
 .home-page {
   position: relative;
-  height: 100vh;
-  height: 100dvh; /* 移动端更精准 */
+  height: 100%;
   padding: 10px 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
   overflow: hidden;
   background:
     radial-gradient(circle at 5% 5%, #FFD1DC 0%, transparent 30%),
@@ -39,7 +38,7 @@
   font-weight: 700;
 }
 
-/* ---------- 装饰泡泡（缩减） ---------- */
+/* ---------- 装饰泡泡 ---------- */
 .bubbles {
   position: absolute;
   inset: 0;
@@ -51,19 +50,17 @@
 .bubble {
   position: absolute;
   font-size: 20px;
-  opacity: 0.3;
+  opacity: 0.22;
   animation: float-up linear infinite;
 }
 
 .bubble.b1 { top: 14%; left: 4%;  animation-duration: 12s; animation-delay: -1s; }
 .bubble.b2 { top: 30%; right: 6%; animation-duration: 14s; animation-delay: -5s; }
-.bubble.b3 { top: 60%; left: 3%;  animation-duration: 13s; animation-delay: -3s; font-size: 18px;}
-.bubble.b4 { display: none; }
-.bubble.b5 { display: none; }
+.bubble.b3 { top: 60%; left: 3%;  animation-duration: 13s; animation-delay: -3s; font-size: 18px; }
 
 @keyframes float-up {
   0%   { transform: translateY(30px) rotate(0deg); opacity: 0; }
-  20%  { opacity: 0.3; }
+  20%  { opacity: 0.22; }
   100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
 }
 
@@ -71,7 +68,7 @@
 .status-card,
 .progress-card,
 .stats-grid,
-.quote-line {
+.bottom-strip {
   position: relative;
   z-index: 1;
 }
@@ -85,7 +82,7 @@
 }
 
 .date-box {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   border: 2px solid #FFD6E3;
   border-radius: 12px;
   padding: 5px 12px;
@@ -96,16 +93,16 @@
 }
 
 .date-text {
-  font-size: 11px;
+  font-size: 12px;
   color: #A06E82;
   font-weight: 700;
 }
 
 .time-text {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 900;
   color: #FF5C8A;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -115,13 +112,13 @@
 }
 
 .icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: #FFFFFF;
   border: 2px solid #FFD6E3;
   box-shadow: 0 3px 0 #FFB8CE;
-  font-size: 18px;
+  font-size: 17px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -135,24 +132,28 @@
   box-shadow: 0 1px 0 #FFB8CE;
 }
 
-/* ---------- 状态大卡片（紧凑 + 合并秒薪） ---------- */
+/* ---------- 状态大卡片 ---------- */
 .status-card {
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 2px;
   box-shadow:
     0 5px 0 rgba(0, 0, 0, 0.05),
-    0 10px 20px rgba(255, 120, 160, 0.18);
-  flex-shrink: 0;
+    0 10px 18px rgba(255, 120, 160, 0.16);
+  flex: 1;
+  min-height: 0;
 }
 
 .status-card-inner {
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 18px;
-  padding: 10px 12px;
+  border-radius: 16px;
+  padding: 12px 14px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 10px;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 10px 12px;
   align-items: center;
+  align-content: stretch;
+  height: 100%;
   backdrop-filter: blur(10px);
 }
 
@@ -163,7 +164,7 @@
 }
 
 .status-emoji {
-  font-size: 34px;
+  font-size: 36px;
   line-height: 1;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.12));
   animation: wiggle 2s ease-in-out infinite;
@@ -181,7 +182,7 @@
 }
 
 .status-text {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: 1px;
   margin-top: 1px;
@@ -192,76 +193,104 @@
   text-align: right;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
-.monthly-info {
+.dual-row {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.monthly-info.small .m-value {
-  font-size: 10px;
-  color: #8A7A82;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .m-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #A08A94;
   font-weight: 700;
 }
 
-.m-value {
-  font-size: 14px;
-  font-weight: 900;
-  color: #3F2A35;
+.m-label.after-tag {
+  color: #2E9E5C;
 }
 
-/* 秒薪展示（内嵌在状态卡第二行，占整行） */
+.m-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: #3F2A35;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-value.after {
+  color: #1F7A44;
+}
+
+.daily-hint {
+  font-size: 10px;
+  color: #8A7A82;
+  margin-top: 2px;
+}
+
+/* 秒薪展示（双行：税前 + 税后） */
 .persec-box {
   grid-column: 1 / -1;
-  background: #FFF9FB;
-  border-radius: 14px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border: 2px dashed #FFC8D8;
+  border: 2px dashed;
+}
+
+.persec-box.before {
+  background: #FFF9FB;
+  border-color: #FFC8D8;
+}
+
+.persec-box.after {
+  background: #F0FBF4;
+  border-color: #B8E8C9;
 }
 
 .persec-label {
-  color: #8A7A82;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   flex-shrink: 0;
+  min-width: 46px;
 }
+
+.persec-box.before .persec-label { color: #CC3F70; }
+.persec-box.after  .persec-label { color: #2E9E5C; }
 
 .persec-value {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
   flex: 1;
 }
 
 .persec-value .currency {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 900;
-  color: #FF5C8A;
 }
+.persec-box.before .persec-value .currency { color: #FF5C8A; }
+.persec-box.after  .persec-value .currency,
+.persec-box.after  .persec-value .currency.a { color: #2E9E5C; }
 
 .persec-value .number {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
-  color: #FF5C8A;
-  text-shadow: 1px 1px 0 #FFF0F5, 2px 2px 0 rgba(255, 92, 138, 0.12);
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.7);
   animation: coin-pop .5s ease;
 }
+.persec-box.before .persec-value .number { color: #FF5C8A; }
+.persec-box.after  .persec-value .number,
+.persec-box.after  .persec-value .number.a { color: #2E9E5C; }
 
 .persec-value .per {
   font-size: 12px;
@@ -275,25 +304,29 @@
 }
 
 .persec-hint {
-  color: #A06E82;
   font-size: 11px;
   flex-shrink: 0;
   white-space: nowrap;
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.persec-box.before .persec-hint { color: #A06E82; }
+.persec-box.after  .persec-hint { color: #4A8D63; }
 
-.persec-hint b {
-  color: #FF5C8A;
-  font-size: 12px;
-}
-
-/* ---------- 进度条卡片（压缩） ---------- */
+/* ---------- 进度条卡片 ---------- */
 .progress-card {
   background: #FFFFFF;
   border: 2px solid #FFD6E3;
-  border-radius: 16px;
-  padding: 8px 12px 10px;
-  box-shadow: 0 4px 0 #FFB8CE, 0 6px 14px rgba(255, 130, 160, 0.14);
-  flex-shrink: 0;
+  border-radius: 14px;
+  padding: 10px 14px 11px;
+  box-shadow: 0 3px 0 #FFB8CE, 0 5px 12px rgba(255, 130, 160, 0.12);
+  flex: 0.5;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .progress-head {
@@ -302,19 +335,20 @@
   align-items: center;
   font-weight: 700;
   color: #9A6E80;
-  margin-bottom: 6px;
-  font-size: 12px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 
 .progress-pct {
   color: #FF5C8A;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
 }
 
 .progress-track {
   position: relative;
-  height: 14px;
+  height: 12px;
   background: #FFF0F5;
   border-radius: 999px;
   overflow: visible;
@@ -346,10 +380,11 @@
 }
 
 .progress-tip {
-  margin-top: 6px;
+  margin-top: 5px;
   color: #8A7A82;
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
+  font-weight: 600;
 }
 
 .progress-tip b {
@@ -366,50 +401,52 @@
   font-weight: 700;
 }
 
-/* ---------- 统计卡片组（3 列一行） ---------- */
+/* ---------- 统计卡片组（今日更大） ---------- */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  flex-shrink: 0;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 7px;
+  flex: 1;
+  min-height: 0;
 }
 
 .stat-card {
   background: #FFFFFF;
-  border-radius: 14px;
-  padding: 8px 8px 10px;
+  border-radius: 12px;
+  padding: 10px 10px;
   border: 2px solid;
-  box-shadow: 0 4px 0;
+  box-shadow: 0 3px 0;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   min-width: 0;
 }
 
 .stat-today {
   border-color: #FFD6A0;
   background: linear-gradient(180deg, #FFFFFF 0%, #FFF9EE 100%);
-  box-shadow: 0 4px 0 #FFB347, 0 6px 14px rgba(255, 150, 70, 0.12);
+  box-shadow: 0 3px 0 #FFB347, 0 5px 12px rgba(255, 150, 70, 0.12);
 }
 
 .stat-month {
   border-color: #BFE0FF;
   background: linear-gradient(180deg, #FFFFFF 0%, #F0F8FF 100%);
-  box-shadow: 0 4px 0 #7FB8FF, 0 6px 14px rgba(100, 160, 255, 0.12);
+  box-shadow: 0 3px 0 #7FB8FF, 0 5px 12px rgba(100, 160, 255, 0.12);
 }
 
 .stat-year {
   border-color: #D9C2F0;
   background: linear-gradient(180deg, #FFFFFF 0%, #F7F0FF 100%);
-  box-shadow: 0 4px 0 #B18CD6, 0 6px 14px rgba(140, 100, 200, 0.12);
+  box-shadow: 0 3px 0 #B18CD6, 0 5px 12px rgba(140, 100, 200, 0.12);
 }
 
 .stat-head {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   justify-content: space-between;
 }
 
@@ -426,7 +463,7 @@
 }
 
 .stat-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #8A7A82;
   white-space: nowrap;
@@ -445,14 +482,28 @@
 .stat-value {
   font-size: 16px;
   font-weight: 900;
-  color: #3F2A35;
+  color: #1F7A44;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
   animation: coin-pop .5s ease;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 今日卡片数值更大 */
+.stat-today .stat-value {
+  font-size: 24px;
+  text-shadow: 1px 1px 0 #FFF3E0;
+}
+
+.stat-today .stat-value-sub {
+  font-size: 11px;
+}
+
+.stat-today .stat-foot {
+  font-size: 10px;
 }
 
 .stat-value.year {
@@ -461,19 +512,32 @@
   text-shadow: 1px 1px 0 #F0E6FF;
 }
 
+.stat-value-sub {
+  font-size: 10px;
+  color: #A09098;
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .stat-foot {
-  margin-top: 4px;
+  margin-top: 3px;
   font-size: 9px;
   color: #A09098;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .mini-bar {
-  margin-top: 5px;
+  margin-top: 4px;
   height: 5px;
   background: #F7EFF3;
   border-radius: 999px;
@@ -499,34 +563,85 @@
   background: #F4EDFB;
 }
 
-/* ---------- 语录（单行小标签） ---------- */
-.quote-line {
-  margin-top: auto;
-  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-  border: 2px solid #FFD54F;
-  border-radius: 12px;
-  padding: 6px 12px;
+/* ---------- 底部：扣款明细 + 语录 ---------- */
+.bottom-strip {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 0 #FFB74D;
+  flex-direction: column;
+  gap: 6px;
   flex-shrink: 0;
 }
 
+.deduct-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 2px solid #E5D3DD;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #7A6A73;
+  font-weight: 700;
+  box-shadow: 0 2px 0 #E5D3DD;
+}
+
+.deduct-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.dot.s { background: #FF8FB1; }
+.dot.f { background: #7FB8FF; }
+.dot.t { background: #B18CD6; }
+
+.deduct-total {
+  margin-left: auto;
+  color: #1F7A44;
+  font-size: 13px;
+}
+
+.deduct-total b {
+  font-weight: 900;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 语录 */
+.quote-line {
+  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+  border: 2px solid #FFD54F;
+  border-radius: 10px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 3px 0 #FFB74D;
+}
+
 .quote-icon {
-  font-size: 18px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
 .quote-text {
   color: #8A6300;
   font-weight: 700;
-  line-height: 1.3;
-  font-size: 11px;
+  line-height: 1.25;
+  font-size: 12px;
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------- 复用 bounce ---------- */
@@ -535,29 +650,36 @@
   50%      { transform: translateY(-6px) rotate(4deg); }
 }
 
-/* ---------- 小屏适配（<380px 再挤一点） ---------- */
+/* ---------- 小屏适配 ---------- */
 @media (max-width: 380px) {
-  .home-page { padding: 8px 10px; gap: 8px; }
-  .status-emoji { font-size: 28px; }
-  .status-text { font-size: 16px; }
-  .m-value { font-size: 12px; }
-  .persec-value .number { font-size: 22px; }
-  .persec-label, .persec-hint { font-size: 10px; }
+  .home-page { padding: 8px 9px; gap: 7px; }
+  .status-emoji { font-size: 30px; }
+  .status-text { font-size: 17px; }
+  .m-value { font-size: 14px; }
+  .persec-value .number { font-size: 23px; }
+  .persec-label { font-size: 12px; }
+  .persec-hint { font-size: 10px; }
   .stat-value { font-size: 14px; }
+  .stat-today .stat-value { font-size: 20px; }
   .stat-value.year { font-size: 13px; }
-  .stat-title { font-size: 10px; }
-  .progress-head, .progress-tip { font-size: 11px; }
-  .quote-text { font-size: 10px; }
+  .stat-title { font-size: 11px; }
+  .stat-value-sub { font-size: 9px; }
+  .progress-head { font-size: 12px; }
+  .progress-pct { font-size: 14px; }
+  .progress-tip { font-size: 11px; }
+  .quote-text { font-size: 11px; }
+  .deduct-row { font-size: 11px; gap: 6px 9px; padding: 5px 8px; }
+  .deduct-total { font-size: 12px; }
+  .time-text { font-size: 15px; }
 }
 
-/* 大屏(>640px)居中限制最大高度，保持单屏观感 */
+/* 大屏居中 */
 @media (min-width: 640px) {
   .home-page {
     max-width: 480px;
-    max-height: 900px;
+    max-height: 880px;
     margin: 0 auto;
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    margin-top: 12px;
   }
 }

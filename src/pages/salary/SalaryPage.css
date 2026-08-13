@@ -1,0 +1,348 @@
+/* ============================================================
+   薪金页 - 全年 12 个月 + 年终奖明细表（扁平紧凑版）
+   ============================================================ */
+
+.salary-page {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 12% 6%, #FFD1DC 0%, transparent 32%),
+    radial-gradient(circle at 88% 14%, #C9E4FF 0%, transparent 36%),
+    linear-gradient(180deg, #FFF0F5 0%, #E8F4FD 100%);
+}
+
+.salary-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 8px 10px 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---------- 空状态 ---------- */
+.salary-empty {
+  height: 100%;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #9A6E80;
+  font-weight: 700;
+}
+
+.empty-emoji {
+  font-size: 56px;
+  animation: bounce-soft 2s ease-in-out infinite;
+}
+
+.btn-go {
+  margin-top: 4px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #FF8FB1, #FF5C8A);
+  color: #FFFFFF;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 0 #E04372;
+}
+
+.btn-go:active { transform: translateY(2px); box-shadow: 0 2px 0 #E04372; }
+
+/* ---------- 顶部标题（压缩） ---------- */
+.salary-header {
+  text-align: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.title-emoji { font-size: 18px; }
+
+.salary-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #FF5C8A;
+  text-shadow: 1.5px 1.5px 0 #FFFFFF;
+  letter-spacing: 0.5px;
+}
+
+.salary-sub {
+  margin: 1px 0 0;
+  color: #7A6A73;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ---------- 合计大卡片（压缩） ---------- */
+.total-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F8 100%);
+  border: 2px solid #FFC8D8;
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: 0 3px 0 #FFB8CE, 0 4px 12px rgba(255, 130, 160, 0.12);
+  flex-shrink: 0;
+}
+
+.total-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 10px;
+}
+
+.total-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.total-label {
+  font-size: 10px;
+  color: #A06E82;
+  font-weight: 700;
+}
+
+.total-value {
+  font-size: 16px;
+  font-weight: 900;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.total-value.before { color: #3F2A35; }
+.total-value.after { color: #1F7A44; text-shadow: 1px 1px 0 #E8F8EE; }
+.total-value.deduct { color: #D45151; }
+.total-value.fund { color: #7A42B8; text-shadow: 1px 1px 0 #F3E8FF; }
+
+.total-sub {
+  font-size: 9px;
+  color: #B098A3;
+  font-weight: 600;
+}
+
+.equivalent-row {
+  margin-top: 6px;
+  padding: 7px 10px;
+  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+  border: 2px solid #FFD54F;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.equiv-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #8A5A00;
+}
+
+.equiv-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: #B8860B;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 1px 1px 0 #FFF8E1;
+}
+
+.bonus-strip {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1.5px dashed #FFD6E3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 10px;
+}
+
+.bonus-tag {
+  background: linear-gradient(135deg, #FFE08A, #FFC74D);
+  color: #8A5A00;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  box-shadow: 0 1px 0 #E0A030;
+}
+
+.bonus-amount {
+  color: #7A6A73;
+  font-weight: 700;
+}
+
+.bonus-amount b {
+  color: #1F7A44;
+  font-family: "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 明细表（填满剩余空间） ---------- */
+.table-card {
+  background: #FFFFFF;
+  border: 2px solid #FFD6E3;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 0 #FFB8CE, 0 4px 10px rgba(255, 130, 160, 0.1);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-head,
+.table-row,
+.table-foot {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1.1fr 1.4fr;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.table-head {
+  background: linear-gradient(135deg, #FFE5EC, #FFD6E3);
+  color: #A03050;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.table-head span,
+.table-row span,
+.table-foot span {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: "Courier New", monospace;
+}
+
+.table-head span:first-child,
+.table-row span:first-child,
+.table-foot span:first-child {
+  text-align: left;
+  font-family: inherit;
+}
+
+.table-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-row {
+  border-bottom: 1px dashed #FFE1EC;
+  color: #5A4350;
+  font-weight: 600;
+  transition: background .12s ease;
+}
+
+.table-row:nth-child(even) {
+  background: #FDFAFB;
+}
+
+.table-row.current {
+  background: linear-gradient(90deg, #FFF8E1 0%, #FFFDF5 100%);
+  box-shadow: inset 3px 0 0 #FFB347;
+}
+
+.table-row.bonus-row {
+  background: linear-gradient(90deg, #FFF3D9 0%, #FFF9EC 100%);
+  box-shadow: inset 3px 0 0 #FFC74D;
+  font-weight: 800;
+  color: #8A5A00;
+}
+
+.col-month {
+  position: relative;
+  font-weight: 800;
+  color: #3F2A35;
+}
+
+.col-before { color: #3F2A35; }
+.col-deduct { color: #C0506A; }
+
+.col-after b {
+  color: #1F7A44;
+  font-weight: 900;
+}
+
+.bonus-row .col-after b { color: #8A5A00; }
+
+.now-dot {
+  display: inline-block;
+  margin-left: 3px;
+  background: #FFB347;
+  color: #FFFFFF;
+  font-size: 7px;
+  font-style: normal;
+  padding: 1px 3px;
+  border-radius: 4px;
+  font-weight: 900;
+  vertical-align: middle;
+}
+
+.table-foot {
+  background: linear-gradient(135deg, #FFF0F5, #FFE5EC);
+  color: #A03050;
+  font-weight: 900;
+  font-size: 10px;
+  border-top: 2px solid #FFD6E3;
+  flex-shrink: 0;
+}
+
+.table-foot span { color: #A03050; }
+.table-foot .col-after b { color: #1F7A44; font-size: 11px; }
+
+/* ---------- 底部提示（压缩） ---------- */
+.salary-tip {
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px dashed #CFE7FF;
+  border-radius: 9px;
+  color: #5A7AA3;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ---------- 小屏 ---------- */
+@media (max-width: 380px) {
+  .salary-inner { padding: 6px 8px 8px; gap: 6px; }
+  .salary-title { font-size: 14px; }
+  .total-value { font-size: 14px; }
+  .equiv-value { font-size: 17px; }
+  .table-head, .table-row, .table-foot {
+    grid-template-columns: 1fr 1.2fr 1fr 1.3fr;
+    padding: 5px 7px;
+    font-size: 11px;
+  }
+  .table-head { font-size: 10px; }
+}
+
+/* 大屏居中 */
+@media (min-width: 640px) {
+  .salary-page {
+    max-width: 560px;
+    margin: 0 auto;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  }
+}

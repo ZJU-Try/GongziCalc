@@ -29,7 +29,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #3F2A35;
   background: #FFE5EC;
-  /* 禁止移动端双击缩放 / 文字选中（更像 App） */
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   user-select: none;
@@ -48,6 +47,85 @@ button {
   position: relative;
 }
 
+/* ---------- 应用外壳：内容 + 底部 Tab ---------- */
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 让需要滚动的页面自行开启滚动 */
+.app-content > .page-scrollable {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- 底部三栏 TabBar ---------- */
+.tab-bar {
+  flex-shrink: 0;
+  height: 58px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  border-top: 2px solid #FFD6E3;
+  box-shadow: 0 -4px 16px rgba(255, 130, 160, 0.12);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  color: #B098A3;
+  font-weight: 700;
+  position: relative;
+  transition: color .15s ease;
+}
+
+.tab-item.active {
+  color: #FF5C8A;
+}
+
+.tab-icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: transform .18s ease;
+}
+
+.tab-item.active .tab-icon {
+  transform: translateY(-2px) scale(1.12);
+}
+
+.tab-label {
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.tab-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #FF5C8A;
+  box-shadow: 0 0 6px rgba(255, 92, 138, 0.6);
+}
+
 /* 数字类等宽显示 */
 .tabular {
   font-variant-numeric: tabular-nums;
@@ -55,14 +133,14 @@ button {
 
 /* 滚动条可爱化 */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFF0F5;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #FFB8CE;
+  background: #FFC8D8;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -72,5 +150,5 @@ button {
 /* 全局浮动 keyframes（复用） */
 @keyframes bounce-soft {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50%      { transform: translateY(-8px) rotate(4deg); }
+  50%      { transform: translateY(-6px) rotate(4deg); }
 }

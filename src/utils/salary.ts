@@ -1,30 +1,20 @@
 import { UserSettings, SalaryResult, WorkStatus } from '@/types';
+import { getAfterTaxForMonth } from './tax';
 
 // ============================================================
 //  工具函数
 // ============================================================
 
-/**
- * "HH:mm" 字符串转当天的分钟数（0 ~ 1439）
- */
 export function timeToMinutes(timeStr: string): number {
   const [h, m] = timeStr.split(':').map(Number);
   return h * 60 + m;
 }
 
-/**
- * 判断某天是否为工作日（周一~周五）
- */
 export function isWorkDay(date: Date): boolean {
   const day = date.getDay();
   return day >= 1 && day <= 5;
 }
 
-/**
- * 获取某月的工作日总数
- * @param year 年
- * @param month 月（0~11）
- */
 export function getMonthWorkDays(year: number, month: number): number {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   let count = 0;
@@ -35,9 +25,6 @@ export function getMonthWorkDays(year: number, month: number): number {
   return count;
 }
 
-/**
- * 获取某月从1号到指定日期（不含当天）的工作日总数
- */
 export function getPassedWorkDays(year: number, month: number, beforeDay: number): number {
   let count = 0;
   for (let d = 1; d < beforeDay; d++) {
@@ -47,16 +34,10 @@ export function getPassedWorkDays(year: number, month: number, beforeDay: number
   return count;
 }
 
-/**
- * 获取今年已过去的完整月份数（不含本月）
- */
 export function getPassedFullMonths(year: number, month: number): number {
   return month; // month 是 0~11，正好就是已过去的完整月份数
 }
 
-/**
- * 计算一天的工作秒数
- */
 export function getDailyWorkSeconds(settings: UserSettings): number {
   const amStart = timeToMinutes(settings.workStartTime);
   const amEnd = timeToMinutes(settings.lunchStartTime);
@@ -76,60 +57,39 @@ export interface WorkStatusResult {
   statusEmoji: string;
 }
 
-/**
- * 判断当前工作状态
- */
 export function getWorkStatus(settings: UserSettings, now: Date): WorkStatusResult {
-  // 先判断是否为工作日
   if (!isWorkDay(now)) {
     return { status: 'weekend', statusText: '周末愉快', statusEmoji: '🎉' };
   }
-
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const workStartMin = timeToMinutes(settings.workStartTime);
   const lunchStartMin = timeToMinutes(settings.lunchStartTime);
   const lunchEndMin = timeToMinutes(settings.lunchEndTime);
   const workEndMin = timeToMinutes(settings.workEndTime);
 
-  if (nowMinutes < workStartMin) {
-    return { status: 'beforeWork', statusText: '还没上班', statusEmoji: '⏰' };
-  }
-  if (nowMinutes < lunchStartMin) {
-    return { status: 'working', statusText: '努力工作中', statusEmoji: '💻' };
-  }
-  if (nowMinutes < lunchEndMin) {
-    return { status: 'lunch', statusText: '午休充电中', statusEmoji: '🍜' };
-  }
-  if (nowMinutes < workEndMin) {
-    return { status: 'working', statusText: '继续搬砖中', statusEmoji: '💪' };
-  }
+  if (nowMinutes < workStartMin) return { status: 'beforeWork', statusText: '还没上班', statusEmoji: '⏰' };
+  if (nowMinutes < lunchStartMin) return { status: 'working', statusText: '努力工作中', statusEmoji: '💻' };
+  if (nowMinutes < lunchEndMin) return { status: 'lunch', statusText: '午休充电中', statusEmoji: '🍜' };
+  if (nowMinutes < workEndMin) return { status: 'working', statusText: '继续搬砖中', statusEmoji: '💪' };
   return { status: 'offWork', statusText: '下班啦~', statusEmoji: '🎊' };
 }
 
 // ============================================================
-//  秒薪计算
+//  税前版计算（保持兼容，直接用月薪）
 // ============================================================
 
-/**
- * 计算秒薪
- * 公式：月薪 / （当月工作日 * 每日工作秒数）
- */
-export function calcPerSecond(settings: UserSettings, now: Date): number {
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const monthWorkDays = getMonthWorkDays(year, month);
-  const dailySeconds = getDailyWorkSeconds(settings);
+export function calcPerSecond(
+  monthlyAmount: number,
+  monthWorkDays: number,
+  dailySeconds: number
+): number {
   const totalWorkSeconds = monthWorkDays * dailySeconds;
   if (totalWorkSeconds <= 0) return 0;
-  return settings.monthlySalary / totalWorkSeconds;
+  return monthlyAmount / totalWorkSeconds;
 }
 
-/**
- * 计算今日已工作的秒数
- */
 export function calcTodayWorkedSeconds(settings: UserSettings, now: Date): number {
   if (!isWorkDay(now)) return 0;
-
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const nowSecondsInDay = nowMinutes * 60 + now.getSeconds();
 
@@ -139,40 +99,42 @@ export function calcTodayWorkedSeconds(settings: UserSettings, now: Date): numbe
   const workEndSec = timeToMinutes(settings.workEndTime) * 60;
 
   let workedSec = 0;
-
-  // 上午时段
   if (nowSecondsInDay >= workStartSec) {
     const amEnd = Math.min(nowSecondsInDay, lunchStartSec);
     workedSec += Math.max(0, amEnd - workStartSec);
   }
-
-  // 下午时段
   if (nowSecondsInDay >= lunchEndSec) {
     const pmEnd = Math.min(nowSecondsInDay, workEndSec);
     workedSec += Math.max(0, pmEnd - lunchEndSec);
   }
-
   return workedSec;
 }
 
 // ============================================================
-//  今日/本月/今年 已赚
+//  今日/本月/今年 已赚（通用，支持税前/税后月薪）
 // ============================================================
 
 /**
- * 今日已赚
+ * 今日已赚 = 今日已工作秒 × 秒薪
  */
-export function calcTodayEarned(settings: UserSettings, now: Date, perSecond: number): number {
-  const worked = calcTodayWorkedSeconds(settings, now);
-  return worked * perSecond;
+export function calcTodayEarned(
+  settings: UserSettings,
+  now: Date,
+  perSecond: number
+): number {
+  return calcTodayWorkedSeconds(settings, now) * perSecond;
 }
 
 /**
- * 本月已赚
- * = 已过完的工作日 * 日薪 + 今日已赚
- * 日薪 = 月薪 / 当月工作日
+ * 本月已赚 = 已过完的工作日 × 日均工资 + 今日已赚
+ * @param monthlySalary 当月工资（税前或税后都可以用相同公式）
  */
-export function calcMonthEarned(settings: UserSettings, now: Date, todayEarned: number): number {
+export function calcMonthEarned(
+  settings: UserSettings,
+  now: Date,
+  todayEarned: number,
+  monthlySalary: number
+): number {
   const year = now.getFullYear();
   const month = now.getMonth();
   const today = now.getDate();
@@ -180,26 +142,30 @@ export function calcMonthEarned(settings: UserSettings, now: Date, todayEarned: 
   if (monthWorkDays === 0) return 0;
 
   const passedWorkDays = getPassedWorkDays(year, month, today);
-  const dailySalary = settings.monthlySalary / monthWorkDays;
-
-  // 过完的工作日全薪 + 今天部分
+  const dailySalary = monthlySalary / monthWorkDays;
   return passedWorkDays * dailySalary + todayEarned;
 }
 
 /**
- * 今年已赚
- * = 已过完的月份 * 月薪 + 本月已赚
+ * 今年已赚 = 已过完月份的工资累计 + 本月已赚
+ * @param getMonthlySalary 函数：(月份 1-12) => 该月工资（支持每个月税后不同）
  */
-export function calcYearEarned(settings: UserSettings, now: Date, monthEarned: number): number {
+export function calcYearEarned(
+  now: Date,
+  monthEarned: number,
+  getMonthlySalary: (monthOneBased: number) => number
+): number {
   const year = now.getFullYear();
-  const month = now.getMonth();
-  const passedMonths = getPassedFullMonths(year, month);
-  return passedMonths * settings.monthlySalary + monthEarned;
+  const month = now.getMonth(); // 0~11
+  let sum = 0;
+  for (let m = 0; m < month; m++) {
+    sum += getMonthlySalary(m + 1);
+  }
+  // 避免警告 year 未使用
+  void year;
+  return sum + monthEarned;
 }
 
-/**
- * 计算今日工作进度百分比（0~100）
- */
 export function calcTodayProgress(settings: UserSettings, now: Date): number {
   const dailySec = getDailyWorkSeconds(settings);
   if (dailySec <= 0) return 0;
@@ -211,53 +177,83 @@ export function calcTodayProgress(settings: UserSettings, now: Date): number {
 //  总入口
 // ============================================================
 
-/**
- * 计算所有工资数据
- */
-export function calculateSalary(settings: UserSettings, now: Date = new Date()): SalaryResult {
+export function calculateSalary(
+  settings: UserSettings,
+  now: Date = new Date()
+): SalaryResult {
   const statusResult = getWorkStatus(settings, now);
-  const perSecond = calcPerSecond(settings, now);
-  const todayEarned = calcTodayEarned(settings, now, perSecond);
-  const monthEarned = calcMonthEarned(settings, now, todayEarned);
-  const yearEarned = calcYearEarned(settings, now, monthEarned);
-  const todayProgress = calcTodayProgress(settings, now);
-  const monthWorkDays = getMonthWorkDays(now.getFullYear(), now.getMonth());
+
+  const year = now.getFullYear();
+  const month0 = now.getMonth();         // 0~11
+  const month1 = month0 + 1;             // 1~12
+  const monthWorkDays = getMonthWorkDays(year, month0);
+  const dailySeconds = getDailyWorkSeconds(settings);
   const workDayFlag = isWorkDay(now);
+
+  // ---- 当月税后拆解 ----
+  const breakdown = getAfterTaxForMonth(settings, month1);
+  // ---- 今年前 N-1 个月的税后累计 ----
+  const prevMonthsAfterTaxSum =
+    month1 > 1 ? getAfterTaxForMonth(settings, month1 - 1).afterTaxYearToMonth : 0;
+
+  // ---- 秒薪（税前 & 税后） ----
+  const perSecondBefore = calcPerSecond(settings.monthlySalary, monthWorkDays, dailySeconds);
+  const perSecondAfter = calcPerSecond(breakdown.afterTaxSalary, monthWorkDays, dailySeconds);
+
+  // ---- 今日 ----
+  const todayEarnedBefore = calcTodayEarned(settings, now, perSecondBefore);
+  const todayEarnedAfter  = calcTodayEarned(settings, now, perSecondAfter);
+
+  // ---- 本月 ----
+  const monthEarnedBefore = calcMonthEarned(settings, now, todayEarnedBefore, settings.monthlySalary);
+  const monthEarnedAfter  = calcMonthEarned(settings, now, todayEarnedAfter, breakdown.afterTaxSalary);
+
+  // ---- 今年 ----
+  // 税前：每个月税前都是固定 salary 假设（简单）
+  const yearEarnedBefore = calcYearEarned(now, monthEarnedBefore, () => settings.monthlySalary);
+  // 税后：前 N-1 个月用累计值，第 N 个月用 monthEarnedAfter
+  const yearEarnedAfter = prevMonthsAfterTaxSum + monthEarnedAfter;
+
+  const todayProgress = calcTodayProgress(settings, now);
 
   return {
     status: statusResult.status,
     statusText: statusResult.statusText,
     statusEmoji: statusResult.statusEmoji,
-    perSecond,
-    todayEarned,
-    monthEarned,
-    yearEarned,
+    perSecond: perSecondBefore,
+    perSecondAfterTax: perSecondAfter,
+    todayEarned: todayEarnedBefore,
+    todayEarnedAfterTax: todayEarnedAfter,
+    monthEarned: monthEarnedBefore,
+    monthEarnedAfterTax: monthEarnedAfter,
+    yearEarned: yearEarnedBefore,
+    yearEarnedAfterTax: yearEarnedAfter,
+    monthBreakdown: {
+      socialPersonal: breakdown.socialPersonal,
+      fundPersonal: breakdown.fundPersonal,
+      personalTax: breakdown.personalTax,
+      afterTaxSalary: breakdown.afterTaxSalary,
+    },
     now,
     todayProgress,
     monthWorkDays,
-    isWorkDay: workDayFlag
+    isWorkDay: workDayFlag,
   };
 }
 
-/**
- * 格式化金额显示
- * - < 1: 保留 4 位小数（如 0.0027）
- * - 1~1000: 保留 2 位小数
- * - ≥ 1000: 保留 2 位小数，带千分位
- */
+// ============================================================
+//  格式化
+// ============================================================
+
 export function formatMoney(value: number): string {
-  if (value < 1) {
-    return value.toFixed(4);
-  }
+  if (!isFinite(value)) return '0.00';
+  if (value < 1) return value.toFixed(4);
   return value.toLocaleString('zh-CN', {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   });
 }
 
-/**
- * 格式化时间 HH:mm:ss
- */
 export function formatTime(date: Date): string {
   const h = String(date.getHours()).padStart(2, '0');
   const m = String(date.getMinutes()).padStart(2, '0');
@@ -265,9 +261,6 @@ export function formatTime(date: Date): string {
   return `${h}:${m}:${s}`;
 }
 
-/**
- * 格式化日期 YYYY年MM月DD日 星期X
- */
 export function formatDate(date: Date): string {
   const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
   const y = date.getFullYear();
