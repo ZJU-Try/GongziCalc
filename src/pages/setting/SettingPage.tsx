@@ -142,7 +142,7 @@ const SettingPage: React.FC = () => {
       <div className="setting-inner">
         <form className="setting-form" onSubmit={handleSubmit}>
           {/* 月薪 + 年终奖（合并卡片） */}
-          <div className={`form-card block-form salary-bonus-card ${form.monthlySalary > 0 ? 'filled' : ''}`}>
+          <div className={`form-card block-form flex-card card-salary-bonus ${form.monthlySalary > 0 ? 'filled' : ''}`}>
             <div className="form-icon sm">💸</div>
             <div className="form-body">
               {/* 税前月薪 */}
@@ -189,34 +189,32 @@ const SettingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 上班-下班时间（合并一行） */}
-          <div className="form-card compact range-card">
-            <div className="form-icon sm">🕐</div>
+          {/* 上下班时间 + 午休时间（合并一个卡片，两行） */}
+          <div className="form-card compact range-card flex-card card-time time-combined-card">
+            <div className="form-icon sm">⏰</div>
             <div className="form-body">
-              <label className="form-label">上班 — 下班</label>
-              <div className="time-range">
-                <TimeSelect value={form.workStartTime} onChange={v => updateForm('workStartTime', v)} options={timeOptions} />
-                <span className="range-sep">—</span>
-                <TimeSelect value={form.workEndTime} onChange={v => updateForm('workEndTime', v)} options={timeOptions} />
+              <div className="time-combined-row">
+                <label className="form-label">上班 — 下班</label>
+                <div className="time-range">
+                  <TimeSelect value={form.workStartTime} onChange={v => updateForm('workStartTime', v)} options={timeOptions} />
+                  <span className="range-sep">—</span>
+                  <TimeSelect value={form.workEndTime} onChange={v => updateForm('workEndTime', v)} options={timeOptions} />
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* 午休时间 */}
-          <div className="form-card compact range-card">
-            <div className="form-icon sm">🍱</div>
-            <div className="form-body">
-              <label className="form-label">午休时间</label>
-              <div className="time-range">
-                <TimeSelect value={form.lunchStartTime} onChange={v => updateForm('lunchStartTime', v)} options={timeOptions} />
-                <span className="range-sep">—</span>
-                <TimeSelect value={form.lunchEndTime} onChange={v => updateForm('lunchEndTime', v)} options={timeOptions} />
+              <div className="time-combined-divider" />
+              <div className="time-combined-row">
+                <label className="form-label">🍱 午休</label>
+                <div className="time-range">
+                  <TimeSelect value={form.lunchStartTime} onChange={v => updateForm('lunchStartTime', v)} options={timeOptions} />
+                  <span className="range-sep">—</span>
+                  <TimeSelect value={form.lunchEndTime} onChange={v => updateForm('lunchEndTime', v)} options={timeOptions} />
+                </div>
               </div>
             </div>
           </div>
 
           {/* 社保基数 */}
-          <div className="form-card block-form">
+          <div className="form-card block-form flex-card card-social">
             <div className="form-icon sm">🏥</div>
             <div className="form-body">
               <div className="label-row">
@@ -237,7 +235,7 @@ const SettingPage: React.FC = () => {
           </div>
 
           {/* 公积金 */}
-          <div className="form-card block-form">
+          <div className="form-card block-form flex-card card-fund">
             <div className="form-icon sm">🏠</div>
             <div className="form-body">
               <div className="label-row">
@@ -250,12 +248,19 @@ const SettingPage: React.FC = () => {
               ) : (
                 <div className="base-hint">生效基数 <b>{fundBase.toFixed(0)}</b> 元 <span className="hint-small">（{WUXI_FUND.BASE_MIN}~{WUXI_FUND.BASE_MAX}）</span></div>
               )}
-              <div className="ratio-row">
+              <div className="ratio-slider-row">
                 <label className="form-label">比例</label>
-                <div className="ratio-chips">
-                  {FUND_RATIO_OPTIONS.map(r => (
-                    <button key={r} type="button" className={`ratio-chip ${form.fundRatio === r ? 'active' : ''}`} onClick={() => updateForm('fundRatio', r)}>{r}%</button>
-                  ))}
+                <div className="ratio-slider-wrap">
+                  <input
+                    type="range"
+                    className="ratio-slider"
+                    min={WUXI_FUND.RATIO_MIN}
+                    max={WUXI_FUND.RATIO_MAX}
+                    step={1}
+                    value={form.fundRatio}
+                    onChange={e => updateForm('fundRatio', Number(e.target.value))}
+                  />
+                  <span className="ratio-slider-value">{form.fundRatio}%</span>
                 </div>
               </div>
               <div className="base-hint">个人缴纳 <b>¥{fundPersonal.toFixed(0)}</b>/月 <span className="hint-small">（单位同 {form.fundRatio}%）</span></div>
@@ -263,7 +268,7 @@ const SettingPage: React.FC = () => {
           </div>
 
           {/* 预览 */}
-          <div className="preview-card big-preview">
+          <div className="preview-card flex-card card-preview big-preview">
             <div className="preview-head"><span>🧮 {previewMonth}月税后预览</span></div>
             <div className="preview-grid">
               <div className="pv-row"><span className="pv-label">税前工资</span><span className="pv-value">¥{form.monthlySalary.toFixed(0)}</span></div>
@@ -276,19 +281,17 @@ const SettingPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="error-bubble"><span className="error-icon">🙀</span><span>{error}</span></div>
+            <div className="error-bubble flex-card card-message"><span className="error-icon">🙀</span><span>{error}</span></div>
           )}
           {showSuccess && !error && (
-            <div className="success-bubble"><span>✨ 保存成功！正在跳转~ ✨</span></div>
+            <div className="success-bubble flex-card card-message"><span>✨ 保存成功！正在跳转~ ✨</span></div>
           )}
 
-          <div className="button-group">
+          <div className="button-group flex-card card-buttons">
             <button type="button" className="btn btn-secondary" onClick={handleReset}>🔄 恢复默认</button>
             <button type="submit" className="btn btn-primary">{existing ? '💾 保存设置' : '🚀 开启赚钱之旅'}</button>
           </div>
         </form>
-
-        <div className="setting-footer"><p>v1.2 · 无锡五险一金 · 个税累计预扣 + 年终奖单独计税</p></div>
       </div>
     </div>
   );
