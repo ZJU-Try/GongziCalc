@@ -1,15 +1,16 @@
 /* ============================================================
-   首页 - 漫画可爱风 + 单屏布局 v3（字体加大、优雅清晰）
+   首页 - 漫画可爱风 + 自适应单屏（百分比/flex，无溢出）
    ============================================================ */
 
 .home-page {
   position: relative;
   height: 100%;
-  padding: 10px 12px 10px;
+  padding: 2% 3%;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 2%;
   overflow: hidden;
+  box-sizing: border-box;
   background:
     radial-gradient(circle at 5% 5%, #FFD1DC 0%, transparent 30%),
     radial-gradient(circle at 95% 10%, #C9E4FF 0%, transparent 35%),
@@ -29,16 +30,17 @@
 }
 
 .loading-cat {
-  font-size: 64px;
+  font-size: clamp(40px, 8vh, 64px);
   animation: bounce-soft 1.6s ease-in-out infinite;
 }
 
 .loading-cat + p {
   color: #FF5C8A;
   font-weight: 700;
+  font-size: clamp(13px, 2vh, 16px);
 }
 
-/* ---------- 装饰泡泡 ---------- */
+/* ---------- 装饰泡泡（减少数量以节省重绘） ---------- */
 .bubbles {
   position: absolute;
   inset: 0;
@@ -49,14 +51,14 @@
 
 .bubble {
   position: absolute;
-  font-size: 20px;
+  font-size: clamp(16px, 3vh, 20px);
   opacity: 0.22;
   animation: float-up linear infinite;
 }
 
 .bubble.b1 { top: 14%; left: 4%;  animation-duration: 12s; animation-delay: -1s; }
 .bubble.b2 { top: 30%; right: 6%; animation-duration: 14s; animation-delay: -5s; }
-.bubble.b3 { top: 60%; left: 3%;  animation-duration: 13s; animation-delay: -3s; font-size: 18px; }
+.bubble.b3 { top: 60%; left: 3%;  animation-duration: 13s; animation-delay: -3s; font-size: clamp(14px, 2.6vh, 18px); }
 
 @keyframes float-up {
   0%   { transform: translateY(30px) rotate(0deg); opacity: 0; }
@@ -71,60 +73,73 @@
 .bottom-strip {
   position: relative;
   z-index: 1;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
-/* ---------- 顶部工具栏 ---------- */
+/* =============================================================
+   顶部工具栏 （flex-shrink: 0，固定占比）
+   ============================================================= */
 .home-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
+  flex: 0 0 auto;
+  gap: 6px;
 }
 
 .date-box {
   background: rgba(255, 255, 255, 0.92);
   border: 2px solid #FFD6E3;
   border-radius: 12px;
-  padding: 5px 12px;
+  padding: 1% 3%;
   box-shadow: 0 3px 0 #FFB8CE;
   display: flex;
   align-items: baseline;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
 }
 
 .date-text {
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vh, 12px);
   color: #A06E82;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .time-text {
-  font-size: 17px;
+  font-size: clamp(14px, 2.3vh, 17px);
   font-weight: 900;
   color: #FF5C8A;
   letter-spacing: 0.5px;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 .top-btns {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: clamp(32px, 5vh, 36px);
+  height: clamp(32px, 5vh, 36px);
   border-radius: 10px;
   background: #FFFFFF;
   border: 2px solid #FFD6E3;
   box-shadow: 0 3px 0 #FFB8CE;
-  font-size: 17px;
+  font-size: clamp(15px, 2.4vh, 17px);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform .12s ease;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .icon-btn:active {
@@ -132,42 +147,63 @@
   box-shadow: 0 1px 0 #FFB8CE;
 }
 
-/* ---------- 状态大卡片 ---------- */
+/* =============================================================
+   状态大卡片 （flex: 1.6 — 按比例分配，不再固定高度）
+   ============================================================= */
 .status-card {
   border-radius: 18px;
   padding: 2px;
   box-shadow:
     0 5px 0 rgba(0, 0, 0, 0.05),
     0 10px 18px rgba(255, 120, 160, 0.16);
-  flex: 0.65;
+  flex: 1.6;
   min-height: 0;
+  max-height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .status-card-inner {
   background: rgba(255, 255, 255, 0.92);
   border-radius: 16px;
-  padding: 12px 14px;
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 10px 12px;
-  align-items: center;
-  align-content: stretch;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+  gap: 3%;
+  align-items: stretch;
   height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   backdrop-filter: blur(10px);
+}
+
+.status-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 2.5;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .status-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 3%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
 }
 
 .status-emoji {
-  font-size: 36px;
+  font-size: clamp(26px, 5vh, 36px);
   line-height: 1;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.12));
   animation: wiggle 2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 @keyframes wiggle {
@@ -175,38 +211,59 @@
   50%      { transform: rotate(6deg); }
 }
 
+.status-text-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .status-label {
-  font-size: 11px;
+  font-size: clamp(9px, 1.4vh, 11px);
   color: #9A8A92;
   font-weight: 700;
+  line-height: 1.1;
 }
 
 .status-text {
-  font-size: 20px;
+  font-size: clamp(16px, 3vh, 20px);
   font-weight: 900;
   letter-spacing: 1px;
   margin-top: 1px;
   text-shadow: 1px 1px 0 #FFFFFF;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-right {
   text-align: right;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
+  flex-shrink: 0;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 0;
 }
 
 .dual-row {
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .m-label {
-  font-size: 11px;
+  font-size: clamp(9px, 1.3vh, 11px);
   color: #A08A94;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .m-label.after-tag {
@@ -214,7 +271,7 @@
 }
 
 .m-value {
-  font-size: 16px;
+  font-size: clamp(13px, 2vh, 16px);
   font-weight: 900;
   color: #3F2A35;
   font-family: "Courier New", monospace;
@@ -226,27 +283,27 @@
 }
 
 .daily-hint {
-  font-size: 10px;
+  font-size: clamp(8px, 1.2vh, 10px);
   color: #8A7A82;
   margin-top: 2px;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
-/* 秒薪展示（双行：税前 + 税后） */
+/* ---------- 秒薪展示（税后一行，占剩余 1.2 份高度，让位给上方信息） ---------- */
 .persec-box {
-  grid-column: 1 / -1;
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 1.5% 3%;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 2%;
   border: 2px dashed;
-}
-
-.persec-box.before {
-  background: #FFF9FB;
-  border-color: #FFC8D8;
+  flex: 1.2;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .persec-box.after {
@@ -255,47 +312,54 @@
 }
 
 .persec-label {
-  font-size: 13px;
+  font-size: clamp(10px, 1.6vh, 13px);
   font-weight: 800;
   flex-shrink: 0;
-  min-width: 46px;
+  min-width: 0;
+  white-space: nowrap;
 }
 
-.persec-box.before .persec-label { color: #CC3F70; }
 .persec-box.after  .persec-label { color: #2E9E5C; }
 
 .persec-value {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 2px;
+  gap: 1%;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
   flex: 1;
+  min-width: 0;
 }
 
 .persec-value .currency {
-  font-size: 15px;
+  font-size: clamp(11px, 1.8vh, 15px);
   font-weight: 900;
+  flex-shrink: 0;
 }
-.persec-box.before .persec-value .currency { color: #FF5C8A; }
 .persec-box.after  .persec-value .currency,
 .persec-box.after  .persec-value .currency.a { color: #2E9E5C; }
 
 .persec-value .number {
-  font-size: 28px;
+  font-size: clamp(18px, 4vh, 28px);
   font-weight: 900;
   text-shadow: 1px 1px 0 rgba(255,255,255,0.7);
   animation: coin-pop .5s ease;
+  line-height: 1.05;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.persec-box.before .persec-value .number { color: #FF5C8A; }
 .persec-box.after  .persec-value .number,
 .persec-box.after  .persec-value .number.a { color: #2E9E5C; }
 
 .persec-value .per {
-  font-size: 12px;
+  font-size: clamp(9px, 1.4vh, 12px);
   color: #A08A94;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 @keyframes coin-pop {
@@ -304,29 +368,35 @@
 }
 
 .persec-hint {
-  font-size: 11px;
+  font-size: clamp(8px, 1.3vh, 11px);
   flex-shrink: 0;
   white-space: nowrap;
   font-weight: 700;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 35%;
 }
-.persec-box.before .persec-hint { color: #A06E82; }
 .persec-box.after  .persec-hint { color: #4A8D63; }
 
-/* ---------- 进度条卡片 ---------- */
+/* =============================================================
+   进度条卡片（flex: 0.8）
+   ============================================================= */
 .progress-card {
   background: #FFFFFF;
   border: 2px solid #FFD6E3;
   border-radius: 14px;
-  padding: 10px 14px 11px;
+  padding: 1.5% 3%;
   box-shadow: 0 3px 0 #FFB8CE, 0 5px 12px rgba(255, 130, 160, 0.12);
-  flex: 0.5;
+  flex: 0.8;
   min-height: 0;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 3%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .progress-head {
@@ -335,24 +405,28 @@
   align-items: center;
   font-weight: 700;
   color: #9A6E80;
-  margin-bottom: 4px;
-  font-size: 13px;
+  font-size: clamp(11px, 1.7vh, 13px);
+  line-height: 1.1;
+  flex-shrink: 0;
+  gap: 6px;
 }
 
 .progress-pct {
   color: #FF5C8A;
   font-weight: 900;
-  font-size: 16px;
+  font-size: clamp(13px, 2.2vh, 16px);
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 .progress-track {
   position: relative;
-  height: 12px;
+  height: clamp(8px, 1.6vh, 12px);
   background: #FFF0F5;
   border-radius: 999px;
   overflow: visible;
   border: 2px solid #FFD6E3;
+  flex-shrink: 0;
 }
 
 .progress-fill {
@@ -368,7 +442,7 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 18px;
+  font-size: clamp(13px, 2.4vh, 18px);
   transition: left .8s cubic-bezier(.2,.9,.3,1.1);
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
   animation: kitty-bounce 0.8s ease-in-out infinite;
@@ -380,11 +454,16 @@
 }
 
 .progress-tip {
-  margin-top: 5px;
+  margin-top: 1%;
   color: #8A7A82;
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vh, 12px);
   text-align: center;
   font-weight: 600;
+  line-height: 1.15;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .progress-tip b {
@@ -401,14 +480,20 @@
   font-weight: 700;
 }
 
-/* ---------- 统计卡片组（今日独占一行，本月今年左右分布） ---------- */
+/* =============================================================
+   统计卡片组：今日独占一行 + 本月/今年各占一行
+   flex: 2.4
+   ============================================================= */
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
-  gap: 7px;
-  flex: 1.35;
+  gap: 2%;
+  flex: 2.4;
   min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .stat-today {
@@ -418,7 +503,7 @@
 .stat-card {
   background: #FFFFFF;
   border-radius: 12px;
-  padding: 10px 10px;
+  padding: 2% 3%;
   border: 2px solid;
   box-shadow: 0 3px 0;
   position: relative;
@@ -427,6 +512,9 @@
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  gap: 2%;
 }
 
 .stat-today {
@@ -450,43 +538,48 @@
 .stat-head {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 3px;
+  gap: 3%;
   justify-content: space-between;
+  flex-shrink: 0;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stat-head-left {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3%;
   min-width: 0;
 }
 
 .stat-emoji {
-  font-size: 16px;
+  font-size: clamp(13px, 2.4vh, 16px);
   flex-shrink: 0;
 }
 
 .stat-title {
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vh, 12px);
   font-weight: 700;
   color: #8A7A82;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .year-pill {
-  font-size: 10px;
+  font-size: clamp(9px, 1.4vh, 10px);
   background: #E8DFFB;
   color: #7A42B8;
-  padding: 2px 8px;
+  padding: 0.5% 5%;
   border-radius: 999px;
   font-weight: 900;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .stat-value {
-  font-size: 16px;
+  font-size: clamp(13px, 2.2vh, 16px);
   font-weight: 900;
   color: #1F7A44;
   font-family: "Courier New", monospace;
@@ -496,58 +589,61 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 /* 今日卡片数值更大（独占一行） */
 .stat-today .stat-value {
-  font-size: 28px;
+  font-size: clamp(20px, 5vh, 28px);
   text-shadow: 1px 1px 0 #FFF3E0;
+  flex-shrink: 1;
 }
 
 .stat-today .stat-value-sub {
-  font-size: 11px;
+  font-size: clamp(9px, 1.4vh, 11px);
 }
 
 .stat-today .stat-foot {
-  font-size: 10px;
+  font-size: clamp(8px, 1.2vh, 10px);
 }
 
 .stat-value.year {
-  font-size: 15px;
+  font-size: clamp(12px, 2vh, 15px);
   color: #7A42B8;
   text-shadow: 1px 1px 0 #F0E6FF;
 }
 
 .stat-value-sub {
-  font-size: 10px;
+  font-size: clamp(9px, 1.3vh, 10px);
   color: #A09098;
   font-weight: 700;
   font-family: "Courier New", monospace;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
-  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 .stat-foot {
-  margin-top: 3px;
-  font-size: 9px;
+  font-size: clamp(7px, 1.1vh, 9px);
   color: #A09098;
   font-weight: 600;
   line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 .mini-bar {
-  margin-top: 4px;
-  height: 5px;
+  height: clamp(3px, 0.8vh, 5px);
   background: #F7EFF3;
   border-radius: 999px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .mini-fill {
@@ -569,40 +665,50 @@
   background: #F4EDFB;
 }
 
-/* ---------- 底部：扣款明细 + 语录 ---------- */
+/* =============================================================
+   底部：扣款明细 + 语录
+   ============================================================= */
 .bottom-strip {
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .deduct-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
+  gap: 2% 5%;
   background: rgba(255, 255, 255, 0.88);
   border: 2px solid #E5D3DD;
   border-radius: 10px;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 1% 2.5%;
+  font-size: clamp(10px, 1.5vh, 12px);
   color: #7A6A73;
   font-weight: 700;
   box-shadow: 0 2px 0 #E5D3DD;
+  box-sizing: border-box;
+  min-height: 0;
+  line-height: 1.3;
 }
 
 .deduct-item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  white-space: nowrap;
 }
 
 .dot {
   display: inline-block;
-  width: 9px;
-  height: 9px;
+  width: clamp(6px, 1vh, 9px);
+  height: clamp(6px, 1vh, 9px);
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .dot.s { background: #FF8FB1; }
@@ -612,7 +718,9 @@
 .deduct-total {
   margin-left: auto;
   color: #1F7A44;
-  font-size: 13px;
+  font-size: clamp(10px, 1.7vh, 13px);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .deduct-total b {
@@ -626,15 +734,18 @@
   background: linear-gradient(135deg, #FFF8E1, #FFECB3);
   border: 2px solid #FFD54F;
   border-radius: 10px;
-  padding: 5px 12px;
+  padding: 0.8% 2.5%;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 2%;
   box-shadow: 0 3px 0 #FFB74D;
+  box-sizing: border-box;
+  min-height: 0;
+  line-height: 1.2;
 }
 
 .quote-icon {
-  font-size: 16px;
+  font-size: clamp(13px, 2.2vh, 16px);
   flex-shrink: 0;
 }
 
@@ -642,7 +753,7 @@
   color: #8A6300;
   font-weight: 700;
   line-height: 1.25;
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vh, 12px);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -654,29 +765,6 @@
 @keyframes bounce-soft {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50%      { transform: translateY(-6px) rotate(4deg); }
-}
-
-/* ---------- 小屏适配 ---------- */
-@media (max-width: 380px) {
-  .home-page { padding: 8px 9px; gap: 7px; }
-  .status-emoji { font-size: 30px; }
-  .status-text { font-size: 17px; }
-  .m-value { font-size: 14px; }
-  .persec-value .number { font-size: 23px; }
-  .persec-label { font-size: 12px; }
-  .persec-hint { font-size: 10px; }
-  .stat-value { font-size: 14px; }
-  .stat-today .stat-value { font-size: 20px; }
-  .stat-value.year { font-size: 13px; }
-  .stat-title { font-size: 11px; }
-  .stat-value-sub { font-size: 9px; }
-  .progress-head { font-size: 12px; }
-  .progress-pct { font-size: 14px; }
-  .progress-tip { font-size: 11px; }
-  .quote-text { font-size: 11px; }
-  .deduct-row { font-size: 11px; gap: 6px 9px; padding: 5px 8px; }
-  .deduct-total { font-size: 12px; }
-  .time-text { font-size: 15px; }
 }
 
 /* 大屏居中 */

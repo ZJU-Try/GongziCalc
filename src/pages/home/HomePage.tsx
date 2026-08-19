@@ -111,25 +111,27 @@ const HomePage: React.FC = () => {
       {/* 状态大卡片：左状态，右月薪(税前/税后两行)，底两行：税前秒薪 + 税后秒薪 */}
       <div className="status-card" style={{ background: statusTheme.gradient }}>
         <div className="status-card-inner">
-          <div className="status-left">
-            <div className="status-emoji">{result.statusEmoji}</div>
-            <div>
-              <div className="status-label">当前状态</div>
-              <div className="status-text" style={{ color: statusTheme.accent }}>
-                {result.statusText}
+          <div className="status-top-row">
+            <div className="status-left">
+              <div className="status-emoji">{result.statusEmoji}</div>
+              <div className="status-text-wrap">
+                <div className="status-label">当前状态</div>
+                <div className="status-text" style={{ color: statusTheme.accent }}>
+                  {result.statusText}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="status-right">
-            <div className="dual-row">
-              <span className="m-label">税前</span>
-              <span className="m-value before">¥{shortMoney(settings.monthlySalary)}</span>
+            <div className="status-right">
+              <div className="dual-row">
+                <span className="m-label">税前</span>
+                <span className="m-value before">¥{shortMoney(settings.monthlySalary)}</span>
+              </div>
+              <div className="dual-row">
+                <span className="m-label after-tag">税后</span>
+                <span className="m-value after">¥{shortMoney(result.monthBreakdown.afterTaxSalary)}</span>
+              </div>
+              <div className="daily-hint">{dailyHours}h · {result.monthWorkDays}天/月</div>
             </div>
-            <div className="dual-row">
-              <span className="m-label after-tag">税后</span>
-              <span className="m-value after">¥{shortMoney(result.monthBreakdown.afterTaxSalary)}</span>
-            </div>
-            <div className="daily-hint">{dailyHours}h · {result.monthWorkDays}天/月</div>
           </div>
 
           {/* 税后秒薪 */}
