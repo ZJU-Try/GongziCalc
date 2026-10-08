@@ -1,5 +1,6 @@
 import { UserSettings, SalaryResult, WorkStatus } from '@/types';
 import { getAfterTaxForMonth } from './tax';
+import { getHolidayName, isAdjustedWorkday, isCalendarWorkDay } from './holidays';
 
 // ============================================================
 //  工具函数
@@ -10,9 +11,17 @@ export function timeToMinutes(timeStr: string): number {
   return h * 60 + m;
 }
 
+/**
+ * 工作日判断(含法定节假日与调休):
+ *   节假日 -> 不工作;调休上班日 -> 工作(即使周末);其余 -> 周一至周五
+ */
 export function isWorkDay(date: Date): boolean {
-  const day = date.getDay();
-  return day >= 1 && day <= 5;
+  return isCalendarWorkDay(date);
+}
+
+/** 今天是否为调休上班日(周末补班) */
+export function isAdjustedWorkDayToday(date: Date): boolean {
+  return isAdjustedWorkday(date) && !getHolidayName(date);
 }
 
 export function getMonthWorkDays(year: number, month: number): number {
@@ -58,6 +67,10 @@ export interface WorkStatusResult {
 }
 
 export function getWorkStatus(settings: UserSettings, now: Date): WorkStatusResult {
+  const holidayName = getHolidayName(now);
+  if (holidayName) {
+    return { status: 'holiday', statusText: `${holidayName}假期`, statusEmoji: '🏮' };
+  }
   if (!isWorkDay(now)) {
     return { status: 'weekend', statusText: '周末愉快', statusEmoji: '🎉' };
   }

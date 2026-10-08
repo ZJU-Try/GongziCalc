@@ -43,7 +43,7 @@ export interface UserSettings {
 }
 
 // 当前工作状态
-export type WorkStatus = 'working' | 'lunch' | 'offWork' | 'weekend' | 'beforeWork';
+export type WorkStatus = 'working' | 'lunch' | 'offWork' | 'weekend' | 'holiday' | 'beforeWork';
 
 // 工资计算结果（同时保留税前 & 税后）
 export interface SalaryResult {

@@ -8,6 +8,7 @@ import {
   formatTime,
   formatDate,
   getDailyWorkSeconds,
+  isAdjustedWorkDayToday,
 } from '@/utils/salary';
 import { getAfterTaxForMonth } from '@/utils/tax';
 import './HomePage.css';
@@ -63,6 +64,8 @@ const HomePage: React.FC = () => {
         return { gradient: 'linear-gradient(135deg,#C9E4FF,#7FB8FF)', accent: '#2E5EAA', glow: 'rgba(46,94,170,.35)' };
       case 'weekend':
         return { gradient: 'linear-gradient(135deg,#E0C3FC,#8EC5FC)', accent: '#7A42B8', glow: 'rgba(122,66,184,.35)' };
+      case 'holiday':
+        return { gradient: 'linear-gradient(135deg,#FFD1DC,#FF9AA2)', accent: '#C2185B', glow: 'rgba(194,24,91,.35)' };
       case 'beforeWork':
       default:
         return { gradient: 'linear-gradient(135deg,#FFE5EC,#FFC1D6)', accent: '#FF5C8A', glow: 'rgba(255,92,138,.35)' };
@@ -167,7 +170,13 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         {!result.isWorkDay ? (
-          <div className="progress-tip weekend">🎉 休息日，好好放松吧！</div>
+          result.status === 'holiday' ? (
+            <div className="progress-tip weekend">🏮 法定节假日，快乐是带薪的！</div>
+          ) : (
+            <div className="progress-tip weekend">🎉 休息日，好好放松吧！</div>
+          )
+        ) : isAdjustedWorkDayToday(result.now) ? (
+          <div className="progress-tip weekend">⚙️ 调休补班日，坚持就是胜利！</div>
         ) : result.todayProgress >= 100 ? (
           <div className="progress-tip done">✅ 今日工时已拉满</div>
         ) : (
@@ -307,6 +316,7 @@ function pickQuote(r: SalaryResult): string {
     case 'lunch':      return '好好吃饭！吃饱才有力气继续赚 🍱✨';
     case 'offWork':    return '下班万岁！今天的你超棒哒 🎁';
     case 'weekend':    return '周末躺平！工作是别人的，命是自己的 🛌💖';
+    case 'holiday':    return '法定节假日！这是法律给的快乐 🧧✨';
     default:           return '加油！每一秒都离财富自由更近 💰🚀';
   }
 }
